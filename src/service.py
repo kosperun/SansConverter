@@ -1,4 +1,4 @@
-from src.encoding_mappings import (
+from encoding_mappings import (
     ASPIRATED_CYRILLIC_LETTERS,
     ASPIRATED_ROMAN_LETTERS,
     RUSSIAN_ENCODINGS,

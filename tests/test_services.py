@@ -1,4 +1,4 @@
-from src.encoding_mappings import (
+from encoding_mappings import (
     BALARAM,
     BALARAM_EXT,
     GAURA_TIMES,
@@ -12,7 +12,7 @@ from src.encoding_mappings import (
     VELTHIUS_EXT,
     Encodings,
 )
-from src.service import convert
+from service import convert
 
 
 def test_convert_general():

@@ -4,7 +4,7 @@ import sys
 
 from PyQt6 import QtCore, QtWidgets
 
-from src.encoding_mappings import (
+from encoding_mappings import (
     ALL_EXT_ENCODINGS,
     CYRILLIC_ENCODINGS,
     HK,
@@ -12,11 +12,11 @@ from src.encoding_mappings import (
     ROMAN_BASIC_ENCODINGS,
     Encodings,
 )
-from src.service import convert
-from src.windows.about import UiAboutDialog
-from src.windows.converter import Ui_SansConverter
-from src.windows.help import UiHelpDialog
-from src.windows.select_encodings import UiSelectEncodingsDialog
+from service import convert
+from windows.about import UiAboutDialog
+from windows.converter import Ui_SansConverter
+from windows.help import UiHelpDialog
+from windows.select_encodings import UiSelectEncodingsDialog
 
 
 class SansConverter(QtWidgets.QMainWindow):
