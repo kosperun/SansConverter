@@ -74,11 +74,11 @@ class UiAboutDialog(QtWidgets.QDialog):
                 "It can also be used to type in Sanskrit text with diacritics (using HK or Velthuis systems)."
                 "<br/>"
                 "<br/>"
-                "Copyright © 2022-2024 Kostiantyn Perun."
+                "Copyright © 2022-2026 Kostiantyn Perun."
                 "<br/>"
                 "Version 2.0"
                 "<br/>"
-                '<a href="https://github.com/Perun108">https://github.com/Perun108</a>'
+                '<a href="https://github.com/kosperun/SansConverter">https://github.com/kosperun/SansConverter</a>'
                 "<br/>"
                 "<br/>"
                 'Send your feedback or suggestions to <a href= "mailto: kosperun@gmail.com">kosperun@gmail.com</a>',
