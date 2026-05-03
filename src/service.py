@@ -85,8 +85,6 @@ def _convert_ukrainian(string, input_encoding, output_encoding):
     # This is only for Ukrainian into Russian (change dga into dha)
     if input_encoding == Encodings.UKR.value and output_encoding in RUSSIAN_ENCODINGS:
         temp_symbols = _change_ga_to_ha(temp_symbols)
-        # 'x' is the joined list 's' (original converted text
-        # but now with all necessary transormations)
     converted_text = "".join(temp_symbols)
     return converted_text
 
@@ -112,7 +110,7 @@ def _replace_russian_e(string, output_encoding):
 
 
 def _change_ga_to_ha(temp_symbols: list) -> list:
-    """Change гг to гх in cyrillic"""
+    """Replace г with х after aspirated consonants (Ukrainian dga → dha pattern)"""
     for i in range(len(temp_symbols) - 1):
         if temp_symbols[i].lower() in ASPIRATED_CYRILLIC_LETTERS and temp_symbols[i + 1] == "г":
             temp_symbols[i + 1] = "х"

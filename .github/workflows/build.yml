@@ -88,6 +88,32 @@ jobs:
             src/sans_converter.py
           # Package as .tar.gz
           tar -czf SansConverter_Linux.tar.gz -C dist SansConverter
+          # Package as .deb
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p sansconverter_deb/DEBIAN
+          mkdir -p sansconverter_deb/usr/local/bin
+          mkdir -p sansconverter_deb/usr/share/applications
+          mkdir -p sansconverter_deb/usr/share/icons/hicolor/96x96/apps
+          cp -r dist/SansConverter sansconverter_deb/usr/local/bin/SansConverter
+          cp src/media/icons8-om-96.png sansconverter_deb/usr/share/icons/hicolor/96x96/apps/sansconverter.png
+          cat > sansconverter_deb/DEBIAN/control << EOF
+Package: sansconverter
+Version: ${VERSION}
+Architecture: amd64
+Maintainer: Kostiantyn Perun <kosperun@gmail.com>
+Description: Sanskrit transliteration converter
+ Converts transliterated Sanskrit text between IAST, Balaram,
+ Harvard-Kyoto, Velthuis, Cyrillic (Russian/Ukrainian), and GauraTimes.
+EOF
+          cat > sansconverter_deb/usr/share/applications/sansconverter.desktop << EOF
+[Desktop Entry]
+Name=SansConverter
+Exec=/usr/local/bin/SansConverter/SansConverter
+Icon=sansconverter
+Type=Application
+Categories=Utility;
+EOF
+          dpkg-deb --build sansconverter_deb SansConverter_Linux.deb
 
       - name: Upload artifact (macOS)
         if: runner.os == 'macOS'
@@ -108,7 +134,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: SansConverter_Linux.tar.gz
+          path: |
+            SansConverter_Linux.tar.gz
+            SansConverter_Linux.deb
 
   release:
     needs: build
@@ -127,5 +155,6 @@ jobs:
             artifacts/SansConverter_macOS/SansConverter.dmg
             artifacts/SansConverter_Windows/SansConverter_Windows.zip
             artifacts/SansConverter_Linux/SansConverter_Linux.tar.gz
+            artifacts/SansConverter_Linux/SansConverter_Linux.deb
           draft: false
           generate_release_notes: true

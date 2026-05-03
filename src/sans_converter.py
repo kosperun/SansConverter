@@ -80,30 +80,28 @@ class SansConverter(QtWidgets.QMainWindow):
         Clears the input window (and undoes history!)
         """
         self.ui.textEdit.clear()
-        self.ui.textEdit.repaint()
 
     def paste_input(self):
         """
         Paste text from clipboard into the input window
         """
         self.ui.textEdit.paste()
-        self.ui.textEdit.repaint()
 
     def open_help(self):
         """
         Opens a dialog window with help in it
         """
-        self.help_ui = UiHelpDialog(self)
-        self.help_ui.show()
-        self.help_ui.adjustSize()
+        dialog = UiHelpDialog(self)
+        dialog.show()
+        dialog.adjustSize()
 
     def open_about(self):
         """
         Opens a dialog window with 'About' information
         """
-        self.about_ui = UiAboutDialog(self)
-        self.about_ui.show()
-        self.about_ui.adjustSize()
+        dialog = UiAboutDialog(self)
+        dialog.show()
+        dialog.adjustSize()
 
     def open_select_encodings(self):
         """
@@ -112,11 +110,7 @@ class SansConverter(QtWidgets.QMainWindow):
         dialog = UiSelectEncodingsDialog(self)
         if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.selected_encodings = dialog.get_selected_encodings()
-        else:
-            warning = WarningDialog(self)
-            if warning.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                self.selected_encodings = self.all_encodings
-            # Rejected = Go Back, keep previously selected encodings unchanged
+        # Cancelled: keep previously selected encodings unchanged
         self.update_comboboxes()
 
     def update_comboboxes(self):
@@ -133,11 +127,10 @@ class SansConverter(QtWidgets.QMainWindow):
 
     def convert(self) -> None:
         """
-        Selects and sends arguments to the 'convert' method
-        The first 4 lists are short lists with only those Roman letters that have diacritical marks
-        They are used for converting between two encodings that are based on Roman script
-        Other lists (RUS, UKR, GAURA_TIMES and the rest with '_EXT' are long lists with *all* symbols
-        of the Roman/Cyrillic alphabet in both uppercase and lowercase)
+        Selects the appropriate character tables and sends them to the 'convert' method.
+        ROMAN_BASIC_ENCODINGS uses short lists with only diacritical letters for Roman↔Roman conversion.
+        ALL_EXT_ENCODINGS uses full alphabet lists for any conversion involving Cyrillic.
+        HK is a special case because it uses only lowercase letters.
         """
         text = self.ui.textEdit.toPlainText()
         input_encoding_name = self.ui.comboBox.currentText()
@@ -154,32 +147,6 @@ class SansConverter(QtWidgets.QMainWindow):
                     input_chars = ALL_EXT_ENCODINGS[input_encoding_name]
                     output_chars = HK_EXT
                     text = text.lower()
-
-            # Balaram encoding has a bug with the IAST "ṣ" character,
-            # so we need to convert first to another encoding and then convert to Balaram.
-            elif (
-                input_encoding_name == Encodings.IAST.value
-                and output_encoding_name == Encodings.BALARAM.value
-                and "ṣ" in text.lower()
-            ):
-                text = convert(
-                    text,
-                    ROMAN_BASIC_ENCODINGS[input_encoding_name],
-                    ROMAN_BASIC_ENCODINGS[Encodings.VELTHIUS.value],
-                    input_encoding_name,
-                    Encodings.VELTHIUS.value,
-                    change_anusvara=self.ui.checkBox.isChecked(),
-                )
-                text = convert(
-                    text,
-                    ROMAN_BASIC_ENCODINGS[Encodings.VELTHIUS.value],
-                    ROMAN_BASIC_ENCODINGS[output_encoding_name],
-                    Encodings.VELTHIUS.value,
-                    output_encoding_name,
-                    change_anusvara=self.ui.checkBox.isChecked(),
-                )
-                self.ui.textBrowser.setPlainText(text)
-                return
 
             # Simplify transliteration of the similar encodings that are based on Roman script
             elif input_encoding_name in ROMAN_BASIC_ENCODINGS and output_encoding_name in ROMAN_BASIC_ENCODINGS:
@@ -219,7 +186,6 @@ class SansConverter(QtWidgets.QMainWindow):
         self.ui.comboBox.setCurrentText(enc2)
         self.ui.comboBox_2.setCurrentText(enc1)
         self.ui.textEdit.setPlainText(output)
-        self.ui.textEdit.repaint()
 
     def closeEvent(self, event) -> None:
         """

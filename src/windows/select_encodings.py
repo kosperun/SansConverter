@@ -1,6 +1,6 @@
 """Select Encodings dialog window"""
 
-from PyQt6.QtCore import QCoreApplication, QMetaObject, Qt
+from PyQt6.QtCore import QCoreApplication, Qt
 from PyQt6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
@@ -19,24 +19,21 @@ class UiSelectEncodingsDialog(QDialog):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent_dialog = parent
-        self.setupUi(self)
+        self.setObjectName("Dialog")
+        self.resize(300, 280)
+        self.setWindowTitle(QCoreApplication.translate("Dialog", "Select encodings", None))
 
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(300, 280)
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", "Select encodings", None))
+        self.mainLayout = QVBoxLayout(self)
 
-        self.mainLayout = QVBoxLayout(Dialog)
-
-        self.label = QLabel("Check encodings to enable them. Drag to reorder.", Dialog)
+        self.label = QLabel("Check encodings to enable them. Drag to reorder.", self)
         self.mainLayout.addWidget(self.label)
 
-        self.listWidget = QListWidget(Dialog)
+        self.listWidget = QListWidget(self)
         self.listWidget.setDragDropMode(QListWidget.DragDropMode.InternalMove)
         self.listWidget.setDefaultDropAction(Qt.DropAction.MoveAction)
         self.mainLayout.addWidget(self.listWidget)
 
-        self.buttonBox = QDialogButtonBox(Dialog)
+        self.buttonBox = QDialogButtonBox(self)
         self.buttonBox.setStandardButtons(
             QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok
         )
@@ -46,8 +43,6 @@ class UiSelectEncodingsDialog(QDialog):
 
         self.buttonBox.accepted.connect(self.check_selected_encodings)
         self.buttonBox.rejected.connect(self.reject)
-
-        QMetaObject.connectSlotsByName(Dialog)
 
     def _populate_list(self):
         # Show selected encodings first (in their saved order), then unselected ones
