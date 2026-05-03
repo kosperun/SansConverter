@@ -31,9 +31,31 @@ def convert(
     if input_encoding == output_encoding:
         return string
 
+    # Build a lookup so we can translate in a single left-to-right pass.
+    # str.replace() in a loop causes collisions when one encoding reuses a
+    # character that was already written as output (e.g. IAST ṣ→ñ then ñ→ï
+    # in Balaram would corrupt the earlier ñ output).
+    translation = {}
     for i, item in enumerate(input_characters):
-        if item in string and item != output_characters[i]:
-            string = string.replace(item, output_characters[i])
+        if item != output_characters[i] and item not in translation:
+            translation[item] = output_characters[i]
+
+    if translation:
+        # Sort by length descending so multi-char tokens (e.g. Velthuis "aa")
+        # are matched before their single-char prefixes.
+        sorted_keys = sorted(translation, key=len, reverse=True)
+        result = []
+        j = 0
+        while j < len(string):
+            for key in sorted_keys:
+                if string[j:j + len(key)] == key:
+                    result.append(translation[key])
+                    j += len(key)
+                    break
+            else:
+                result.append(string[j])
+                j += 1
+        string = "".join(result)
 
     if input_encoding == Encodings.HK.value:
         string = string.lower()
@@ -139,15 +161,18 @@ def _fix_russian_e_at_beginning(string: str) -> str:
 
 
 def _convert_j_properly(string: str) -> str:
-    """Converts j to cyrillic дж"""
-    try:
-        position = 0
-        # Check if the next character after "Дж" is uppercase
-        while string != "Дж" and position != -1:
-            if string[position:].startswith("Дж") and string[position + 2].isupper():
-                string = string[:position] + "ДЖ" + string[position + 2 :]
-            # Move past the current "Дж" to find the next occurrence
-            position = string.find("Дж", position + 1)
-    except IndexError:
-        string = string[:-1] + "Ж"
-    return string
+    """Upgrades Дж to ДЖ only in an all-caps context (e.g. JAGANNATHA -> ДЖАҐАННАТГА)."""
+    result = []
+    i = 0
+    while i < len(string):
+        if string[i:i + 2] == "Дж":
+            next_is_upper = (i + 2 < len(string)) and string[i + 2].isupper()
+            if next_is_upper:
+                result.append("ДЖ")
+            else:
+                result.append("Дж")
+            i += 2
+        else:
+            result.append(string[i])
+            i += 1
+    return "".join(result)
