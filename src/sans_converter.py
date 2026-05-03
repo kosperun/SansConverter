@@ -17,6 +17,7 @@ from windows.about import UiAboutDialog
 from windows.converter import Ui_SansConverter
 from windows.help import UiHelpDialog
 from windows.select_encodings import UiSelectEncodingsDialog
+from windows.select_encodings_warning import WarningDialog
 
 
 class SansConverter(QtWidgets.QMainWindow):
@@ -115,7 +116,10 @@ class SansConverter(QtWidgets.QMainWindow):
             if not self.selected_encodings:
                 self.selected_encodings = self.all_encodings
         else:
-            self.selected_encodings = self.all_encodings
+            warning = WarningDialog(self)
+            if warning.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                self.selected_encodings = self.all_encodings
+            # Rejected = Go Back, keep previously selected encodings unchanged
         self.update_comboboxes()
 
     def update_comboboxes(self):
