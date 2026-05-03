@@ -96,7 +96,7 @@ jobs:
           mkdir -p sansconverter_deb/usr/share/icons/hicolor/96x96/apps
           cp -r dist/SansConverter sansconverter_deb/usr/local/bin/SansConverter
           cp src/media/icons8-om-96.png sansconverter_deb/usr/share/icons/hicolor/96x96/apps/sansconverter.png
-          cat > sansconverter_deb/DEBIAN/control << EOF
+          cat > sansconverter_deb/DEBIAN/control << CONTROL
 Package: sansconverter
 Version: ${VERSION}
 Architecture: amd64
@@ -104,15 +104,15 @@ Maintainer: Kostiantyn Perun <kosperun@gmail.com>
 Description: Sanskrit transliteration converter
  Converts transliterated Sanskrit text between IAST, Balaram,
  Harvard-Kyoto, Velthuis, Cyrillic (Russian/Ukrainian), and GauraTimes.
-EOF
-          cat > sansconverter_deb/usr/share/applications/sansconverter.desktop << EOF
+CONTROL
+          cat > sansconverter_deb/usr/share/applications/sansconverter.desktop << 'DESKTOP'
 [Desktop Entry]
 Name=SansConverter
 Exec=/usr/local/bin/SansConverter/SansConverter
 Icon=sansconverter
 Type=Application
 Categories=Utility;
-EOF
+DESKTOP
           dpkg-deb --build sansconverter_deb SansConverter_Linux.deb
 
       - name: Upload artifact (macOS)
