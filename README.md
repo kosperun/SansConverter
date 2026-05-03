@@ -25,7 +25,17 @@ SansConverter comes in two editions:
 - the **main version** (v1.6, with version number without any suffix) is all-Unicode and works with the six transliteration systems mentioned above. This edition is for everyone who works with Roman or Cyrillic Unicode transliteration of Sanskrit texts and doesn't need the custom BBT font called "Gaura Times".
 - the **"Gaura Times edition"** (v1.6gt) has a "gt" suffix in the version number and has an additional transliteration system called "Gaura Times". It is a custom system, developed by the Russian BBT, which is not represented in the Unicode tables and therefore cannot be used online without setting your custom font on a webpage. It is widely used in BBT publications and online Vedabase that make use of Cyrillic alphabet. Another difference between the main version and the "gt" version is that the output window for the transliterated text is set to the "Gaura Times" serif font for all transliterations systems. This edition will be useful only for those who work with the "Gaura Times" font.
 
-The program requires no installation and you can just drag and drop the .exe or .app file to your Panel in Windows or to your Application folder or Dock on Mac. However, if you want to install it as a regular application on your Windows system you can use the installer “SansConverter_v1.6_Install.exe”.
+The program requires no installation and you can just drag and drop the .exe or .app file to your Panel in Windows or to your Application folder or Dock on Mac.
+
+**macOS note:** When opening the app for the first time, macOS may show a warning that it cannot verify the app. This is because the app is not signed with an Apple Developer certificate. To open it anyway:
+1. Try to open the app — click **Done** when the warning appears.
+2. Go to **System Settings → Privacy & Security**.
+3. Scroll down and click **Open Anyway** next to the SansConverter entry.
+
+Alternatively, run this command in Terminal:
+```
+xattr -dr com.apple.quarantine /path/to/SansConverter.app
+```
 
 There is some more information about transliteration systems under “Help” menu. 
 
