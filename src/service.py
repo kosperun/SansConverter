@@ -92,14 +92,10 @@ def _convert_ukrainian(string, input_encoding, output_encoding):
 
 
 def _change_anusvara_type(string):
-    if "ṁ" in string:
-        string = string.replace("ṁ", "ṃ")
-    elif "Ṁ" in string:
-        string = string.replace("Ṁ", "Ṃ")
-    elif "м̇" in string:
-        string = string.replace("м̇", "м̣")
-    elif "М̇" in string:
-        string = string.replace("М̇", "М̣")
+    string = string.replace("ṁ", "ṃ")
+    string = string.replace("Ṁ", "Ṃ")
+    string = string.replace("м̇", "м̣")
+    string = string.replace("М̇", "М̣")
     return string
 
 

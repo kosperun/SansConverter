@@ -349,11 +349,15 @@ class TestAnusvara:
     # change_anusvara fires after translation, so it only takes effect when the
     # output encoding contains ṁ/ṃ — i.e. when converting TO IAST.
 
-    def test_dot_above_to_dot_below(self):
+    def test_lowercase_dot_above_to_dot_below(self):
         assert convert("raama.m", VELTHIUS, IAST, V, I, change_anusvara=True) == "rāmaṃ"
 
     def test_uppercase_dot_above_to_dot_below(self):
         assert convert("RAAMA.M", VELTHIUS, IAST, V, I, change_anusvara=True) == "RĀMAṂ"
+
+    def test_mixed_case_both_converted(self):
+        # Both uppercase and lowercase anusvara must be converted in the same string
+        assert convert("RAAMA.M raama.m", VELTHIUS, IAST, V, I, change_anusvara=True) == "RĀMAṂ rāmaṃ"
 
     def test_no_change_without_flag(self):
         assert convert("raama.m", VELTHIUS, IAST, V, I, change_anusvara=False) == "rāmaṁ"
