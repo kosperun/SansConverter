@@ -1,0 +1,119 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            artifact_name: SansConverter_macOS
+          - os: windows-latest
+            artifact_name: SansConverter_Windows
+          - os: ubuntu-latest
+            artifact_name: SansConverter_Linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install PyQt6==6.7.0 pyqt6-qt6==6.7.0 pyinstaller
+
+      - name: Build (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          pyinstaller \
+            --name SansConverter \
+            --windowed \
+            --icon src/media/icons8-om-96.png \
+            --add-data "src/media:media" \
+            --paths src \
+            src/sans_converter.py
+          # Package .app into a .dmg
+          brew install create-dmg
+          create-dmg \
+            --volname "SansConverter" \
+            --window-size 500 300 \
+            --icon-size 100 \
+            --app-drop-link 380 150 \
+            "SansConverter.dmg" \
+            "dist/SansConverter.app"
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          pyinstaller `
+            --name SansConverter `
+            --windowed `
+            --icon src/media/icons8-om-96.ico `
+            --add-data "src/media;media" `
+            --version-file version.txt `
+            --paths src `
+            src/sans_converter.py
+          Compress-Archive -Path dist/SansConverter -DestinationPath SansConverter_Windows.zip
+
+      - name: Build (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y libxcb-xinerama0 libxcb-cursor0 \
+            libglib2.0-0 libgl1 libegl1
+          pyinstaller \
+            --name SansConverter \
+            --windowed \
+            --icon src/media/icons8-om-96.png \
+            --add-data "src/media:media" \
+            --paths src \
+            src/sans_converter.py
+          # Package as .tar.gz
+          tar -czf SansConverter_Linux.tar.gz -C dist SansConverter
+
+      - name: Upload artifact (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: SansConverter.dmg
+
+      - name: Upload artifact (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: SansConverter_Windows.zip
+
+      - name: Upload artifact (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: SansConverter_Linux.tar.gz
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/SansConverter_macOS/SansConverter.dmg
+            artifacts/SansConverter_Windows/SansConverter_Windows.zip
+            artifacts/SansConverter_Linux/SansConverter_Linux.tar.gz
+          draft: false
+          generate_release_notes: true
