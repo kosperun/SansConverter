@@ -66,13 +66,13 @@ jobs:
         run: |
           pyinstaller `
             --name SansConverter `
+            --onefile `
             --windowed `
             --icon src/media/icons8-om-96.ico `
             --add-data "src/media;media" `
             --version-file version.txt `
             --paths src `
             src/sans_converter.py
-          Compress-Archive -Path dist/SansConverter -DestinationPath SansConverter_Windows.zip
 
       - name: Build (Linux)
         if: runner.os == 'Linux'
@@ -87,7 +87,7 @@ jobs:
             --paths src \
             src/sans_converter.py
           # Package as .tar.gz
-          tar -czf SansConverter_Linux.tar.gz -C dist SansConverter
+          tar -czf SansConverter.tar.gz -C dist SansConverter
           # Package as .deb
           VERSION="${GITHUB_REF_NAME#v}"
           mkdir -p sansconverter_deb/DEBIAN
@@ -98,7 +98,7 @@ jobs:
           cp src/media/icons8-om-96.png sansconverter_deb/usr/share/icons/hicolor/96x96/apps/sansconverter.png
           printf "Package: sansconverter\nVersion: %s\nArchitecture: amd64\nMaintainer: Kostiantyn Perun <kosperun@gmail.com>\nDescription: Sanskrit transliteration converter\n Converts transliterated Sanskrit text between IAST, Balaram,\n Harvard-Kyoto, Velthuis, Cyrillic (Russian/Ukrainian), and GauraTimes.\n" "${VERSION}" > sansconverter_deb/DEBIAN/control
           printf "[Desktop Entry]\nName=SansConverter\nExec=/usr/local/bin/SansConverter/SansConverter\nIcon=sansconverter\nType=Application\nCategories=Utility;\n" > sansconverter_deb/usr/share/applications/sansconverter.desktop
-          dpkg-deb --build sansconverter_deb SansConverter_Linux.deb
+          dpkg-deb --build sansconverter_deb SansConverter.deb
 
       - name: Upload artifact (macOS)
         if: runner.os == 'macOS'
@@ -112,7 +112,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: SansConverter_Windows.zip
+          path: dist/SansConverter.exe
 
       - name: Upload artifact (Linux)
         if: runner.os == 'Linux'
@@ -120,8 +120,8 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: |
-            SansConverter_Linux.tar.gz
-            SansConverter_Linux.deb
+            SansConverter.tar.gz
+            SansConverter.deb
 
   release:
     needs: build
@@ -138,8 +138,8 @@ jobs:
         with:
           files: |
             artifacts/SansConverter_macOS/SansConverter.dmg
-            artifacts/SansConverter_Windows/SansConverter_Windows.zip
-            artifacts/SansConverter_Linux/SansConverter_Linux.tar.gz
-            artifacts/SansConverter_Linux/SansConverter_Linux.deb
+            artifacts/SansConverter_Windows/SansConverter.exe
+            artifacts/SansConverter_Linux/SansConverter.tar.gz
+            artifacts/SansConverter_Linux/SansConverter.deb
           draft: false
           generate_release_notes: true
