@@ -66,6 +66,9 @@ class UiHelpDialog(QtWidgets.QDialog):
         self.label.setText(
             _translate(
                 "Dialog",
+                "<b>Tip:</b> You can use Harvard-Kyoto or Velthuis as a typing aid — both are pure ASCII, so you can type Sanskrit with diacritics on any standard QWERTY keyboard without any special input methods. Just select one of them as the input system, type your text, and copy the converted result."
+                "<br/>"
+                "<br/>"
                 "<b>- IAST</b> is a transliteration system that is standard among scholars."
                 "<br/>"
                 "<b>- Balaram</b> is a legacy ASCII transliteration system developed by ISKCON BBT."

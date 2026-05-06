@@ -15,7 +15,7 @@ import pytest
 from encoding_mappings import (
     BALARAM, BALARAM_EXT,
     IAST, IAST_EXT,
-    VELTHIUS, VELTHIUS_EXT,
+    VELTHUIS, VELTHUIS_EXT,
     HK, HK_EXT,
     RUS, UKR, GAURA_TIMES,
     ALL_EXT_ENCODINGS,
@@ -26,7 +26,7 @@ from service import convert
 B = Encodings.BALARAM.value
 I = Encodings.IAST.value
 H = Encodings.HK.value
-V = Encodings.VELTHIUS.value
+V = Encodings.VELTHUIS.value
 U = Encodings.UKR.value
 R = Encodings.RUS.value
 G = Encodings.GAURA_TIMES.value
@@ -43,7 +43,7 @@ def full(t):
 
 
 # ---------------------------------------------------------------------------
-# Roman basic tuples (IAST, BALARAM, VELTHIUS, HK) — all 15 diacritical chars
+# Roman basic tuples (IAST, BALARAM, VELTHUIS, HK) — all 15 diacritical chars
 # ---------------------------------------------------------------------------
 
 class TestRomanBasic:
@@ -55,16 +55,16 @@ class TestRomanBasic:
         assert convert(full(BALARAM), BALARAM, IAST, B, I) == full(IAST)
 
     def test_iast_to_velthuis(self):
-        assert convert(full(IAST), IAST, VELTHIUS, I, V) == full(VELTHIUS)
+        assert convert(full(IAST), IAST, VELTHUIS, I, V) == full(VELTHUIS)
 
     def test_velthuis_to_iast(self):
-        assert convert(full(VELTHIUS), VELTHIUS, IAST, V, I) == full(IAST)
+        assert convert(full(VELTHUIS), VELTHUIS, IAST, V, I) == full(IAST)
 
     def test_balaram_to_velthuis(self):
-        assert convert(full(BALARAM), BALARAM, VELTHIUS, B, V) == full(VELTHIUS)
+        assert convert(full(BALARAM), BALARAM, VELTHUIS, B, V) == full(VELTHUIS)
 
     def test_velthuis_to_balaram(self):
-        assert convert(full(VELTHIUS), VELTHIUS, BALARAM, V, B) == full(BALARAM)
+        assert convert(full(VELTHUIS), VELTHUIS, BALARAM, V, B) == full(BALARAM)
 
     def test_iast_to_hk(self):
         assert convert(lc(IAST), IAST, HK, I, H) == lc(HK)
@@ -79,10 +79,10 @@ class TestRomanBasic:
         assert convert(lc(HK), HK, BALARAM, H, B) == lc(BALARAM)
 
     def test_velthuis_to_hk(self):
-        assert convert(lc(VELTHIUS), VELTHIUS, HK, V, H) == lc(HK)
+        assert convert(lc(VELTHUIS), VELTHUIS, HK, V, H) == lc(HK)
 
     def test_hk_to_velthuis(self):
-        assert convert(lc(HK), HK, VELTHIUS, H, V) == lc(VELTHIUS)
+        assert convert(lc(HK), HK, VELTHUIS, H, V) == lc(VELTHUIS)
 
 
 # ---------------------------------------------------------------------------
@@ -98,16 +98,16 @@ class TestRomanExt:
         assert convert(full(BALARAM_EXT), BALARAM_EXT, IAST_EXT, B, I) == full(IAST_EXT)
 
     def test_iast_ext_to_velthuis_ext(self):
-        assert convert(full(IAST_EXT), IAST_EXT, VELTHIUS_EXT, I, V) == full(VELTHIUS_EXT)
+        assert convert(full(IAST_EXT), IAST_EXT, VELTHUIS_EXT, I, V) == full(VELTHUIS_EXT)
 
     def test_velthuis_ext_to_iast_ext(self):
-        assert convert(full(VELTHIUS_EXT), VELTHIUS_EXT, IAST_EXT, V, I) == full(IAST_EXT)
+        assert convert(full(VELTHUIS_EXT), VELTHUIS_EXT, IAST_EXT, V, I) == full(IAST_EXT)
 
     def test_balaram_ext_to_velthuis_ext(self):
-        assert convert(full(BALARAM_EXT), BALARAM_EXT, VELTHIUS_EXT, B, V) == full(VELTHIUS_EXT)
+        assert convert(full(BALARAM_EXT), BALARAM_EXT, VELTHUIS_EXT, B, V) == full(VELTHUIS_EXT)
 
     def test_velthuis_ext_to_balaram_ext(self):
-        assert convert(full(VELTHIUS_EXT), VELTHIUS_EXT, BALARAM_EXT, V, B) == full(BALARAM_EXT)
+        assert convert(full(VELTHUIS_EXT), VELTHUIS_EXT, BALARAM_EXT, V, B) == full(BALARAM_EXT)
 
 
 # ---------------------------------------------------------------------------
@@ -143,11 +143,11 @@ class TestRomanToCyrillic:
 
     def test_velthuis_ext_to_rus(self):
         expected = " ".join(RUS).replace("Дж ДЖ", "Дж Дж").replace(" Е ", " Э ").replace(" е ", " э ")
-        assert convert(" ".join(VELTHIUS_EXT), VELTHIUS_EXT, RUS, V, R) == expected
+        assert convert(" ".join(VELTHUIS_EXT), VELTHUIS_EXT, RUS, V, R) == expected
 
     def test_velthuis_ext_to_ukr(self):
         expected = " ".join(UKR).replace("Дж ДЖ", "Дж Дж")
-        assert convert(" ".join(VELTHIUS_EXT), VELTHIUS_EXT, UKR, V, U) == expected
+        assert convert(" ".join(VELTHUIS_EXT), VELTHUIS_EXT, UKR, V, U) == expected
 
 
 # ---------------------------------------------------------------------------
@@ -163,7 +163,7 @@ class TestCyrillicToRoman:
         assert convert(full(UKR), UKR, BALARAM_EXT, U, B) == full(BALARAM_EXT)
 
     def test_ukr_to_velthuis_ext(self):
-        assert convert(full(UKR), UKR, VELTHIUS_EXT, U, V) == full(VELTHIUS_EXT)
+        assert convert(full(UKR), UKR, VELTHUIS_EXT, U, V) == full(VELTHUIS_EXT)
 
     def test_ukr_to_hk_ext(self):
         assert convert(full(UKR), UKR, HK_EXT, U, H) == full(HK_EXT)
@@ -175,7 +175,7 @@ class TestCyrillicToRoman:
         assert convert(" ".join(RUS), RUS, BALARAM_EXT, R, B) == " ".join(BALARAM_EXT)
 
     def test_rus_to_velthuis_ext(self):
-        assert convert(" ".join(RUS), RUS, VELTHIUS_EXT, R, V) == " ".join(VELTHIUS_EXT)
+        assert convert(" ".join(RUS), RUS, VELTHUIS_EXT, R, V) == " ".join(VELTHUIS_EXT)
 
     def test_rus_to_hk_ext(self):
         assert convert(" ".join(RUS), RUS, HK_EXT, R, H) == " ".join(HK_EXT)
@@ -228,7 +228,7 @@ class TestGauraTimesToRoman:
         assert convert(" ".join(GAURA_TIMES), GAURA_TIMES, BALARAM_EXT, G, B) == " ".join(BALARAM_EXT)
 
     def test_gaura_times_to_velthuis_ext(self):
-        assert convert(" ".join(GAURA_TIMES), GAURA_TIMES, VELTHIUS_EXT, G, V) == " ".join(VELTHIUS_EXT)
+        assert convert(" ".join(GAURA_TIMES), GAURA_TIMES, VELTHUIS_EXT, G, V) == " ".join(VELTHUIS_EXT)
 
     def test_gaura_times_to_hk_ext(self):
         assert convert(" ".join(GAURA_TIMES), GAURA_TIMES, HK_EXT, G, H) == " ".join(HK_EXT)
@@ -247,7 +247,7 @@ class TestIdentity:
         assert convert(full(IAST), IAST, IAST, I, I) == full(IAST)
 
     def test_velthuis(self):
-        assert convert(full(VELTHIUS), VELTHIUS, VELTHIUS, V, V) == full(VELTHIUS)
+        assert convert(full(VELTHUIS), VELTHUIS, VELTHUIS, V, V) == full(VELTHUIS)
 
     def test_hk(self):
         assert convert(full(HK), HK, HK, H, H) == full(HK)
@@ -327,18 +327,18 @@ class TestVelthuisTokens:
         (".m",      "ṁ"),
     ])
     def test_each_token_to_iast(self, velthuis, expected_iast):
-        assert convert(velthuis, VELTHIUS, IAST, V, I) == expected_iast
+        assert convert(velthuis, VELTHUIS, IAST, V, I) == expected_iast
 
     def test_dot_rr_not_confused_with_dot_r(self):
         # .rr must match before .r so ṝ is not read as ṛ + r
-        assert convert(".rr", VELTHIUS, IAST, V, I) == "ṝ"
-        assert convert(".r", VELTHIUS, IAST, V, I) == "ṛ"
+        assert convert(".rr", VELTHUIS, IAST, V, I) == "ṝ"
+        assert convert(".r", VELTHUIS, IAST, V, I) == "ṛ"
 
     def test_multiple_tokens_in_sequence(self):
         # All 15 tokens in one string, space-separated, matching the full tuple
-        velthuis_all = " ".join(VELTHIUS[:15])
+        velthuis_all = " ".join(VELTHUIS[:15])
         iast_all = " ".join(IAST[:15])
-        assert convert(velthuis_all, VELTHIUS, IAST, V, I) == iast_all
+        assert convert(velthuis_all, VELTHUIS, IAST, V, I) == iast_all
 
 
 # ---------------------------------------------------------------------------
@@ -350,17 +350,17 @@ class TestAnusvara:
     # output encoding contains ṁ/ṃ — i.e. when converting TO IAST.
 
     def test_lowercase_dot_above_to_dot_below(self):
-        assert convert("raama.m", VELTHIUS, IAST, V, I, change_anusvara=True) == "rāmaṃ"
+        assert convert("raama.m", VELTHUIS, IAST, V, I, change_anusvara=True) == "rāmaṃ"
 
     def test_uppercase_dot_above_to_dot_below(self):
-        assert convert("RAAMA.M", VELTHIUS, IAST, V, I, change_anusvara=True) == "RĀMAṂ"
+        assert convert("RAAMA.M", VELTHUIS, IAST, V, I, change_anusvara=True) == "RĀMAṂ"
 
     def test_mixed_case_both_converted(self):
         # Both uppercase and lowercase anusvara must be converted in the same string
-        assert convert("RAAMA.M raama.m", VELTHIUS, IAST, V, I, change_anusvara=True) == "RĀMAṂ rāmaṃ"
+        assert convert("RAAMA.M raama.m", VELTHUIS, IAST, V, I, change_anusvara=True) == "RĀMAṂ rāmaṃ"
 
     def test_no_change_without_flag(self):
-        assert convert("raama.m", VELTHIUS, IAST, V, I, change_anusvara=False) == "rāmaṁ"
+        assert convert("raama.m", VELTHUIS, IAST, V, I, change_anusvara=False) == "rāmaṁ"
 
 
 # ---------------------------------------------------------------------------

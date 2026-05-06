@@ -4,30 +4,59 @@ A stand-alone cross-platform converter for different Sanskrit transliteration sy
 ### Description
 SansConverter is an offline program that allows you to easily and quickly convert transliterated Sanskrit text from one transliteration system to another. You can also type in Sanskrit text in the standard Roman transliteration (IAST) (or other systems) using just your standard QWERTY keyboard.
 
-You can use it to create Sanskrit text with diacritics to use later in online posts, messages, books, articles, etc.  
+You can use it to create Sanskrit text with diacritics to use later in online posts, messages, books, articles, etc.
 
 ### SansConverter features:
 
-* Several well-known systems are supported, namely Balaram (1), IAST (2), Harvard-Kyoto (3), Velthuis (4), Cyrillic transliteration both in Russian (5) and Ukrainian (6) versions, and Gaura Times (7) — a legacy non-Unicode Cyrillic system developed by the Russian ISKCON BBT, used in their publications and requiring a custom font of the same name.
-* The text is converted “on the spot” while you are typing or whenever it is pasted into the input window. 
-* The program remembers previous transliteration systems that you chose last time and opens them automatically when started next time.
-* It also remembers the size of the window (if you resize it) and its position (if you move it on your screen). 
-* You can also access all buttons and select transliteration systems with your keyboard, either by pressing Tab or using the shortcuts (see the macOS keyboard navigation note in the Installation section below).
-* You can choose between “ṁ” or “ṃ” by checking the box in the main window (this setting is also remembered at next start).
-* Text can be pasted from the clipboard and converted text can be copied to clipboard by pressing the respective buttons. 
-* You can enable or disable individual transliteration systems via **Settings → Enable/Disable encodings** in the menu — only the systems you need will appear in the dropdowns.
+* Seven transliteration systems are supported: **IAST**, **Balaram**, **Harvard-Kyoto**, **Velthuis**, **Cyrillic (Ukrainian)**, **Cyrillic (Russian)**, and **Gaura Times** — a legacy non-Unicode Cyrillic system developed by the Russian ISKCON BBT, used in their publications and requiring a custom font of the same name.
+* Text is converted in real time as you type or paste into the input field.
+* You can choose between "ṁ" (dot above) or "ṃ" (dot below) for the anusvara via a checkbox in the main window.
+* The program remembers your previously selected transliteration systems, window size, window position, anusvara style, and enabled encodings — all restored automatically on next launch.
+* You can enable or disable individual transliteration systems via **Settings → Enable/Disable encodings** in the menu. You can also **reorder** them by dragging and dropping in that dialog — only the systems you need will appear in the dropdowns.
+* All major functions have keyboard shortcuts; you can also navigate between controls using Tab.
+* Text can be pasted from the clipboard and converted text can be copied to the clipboard via buttons or keyboard shortcuts.
 
-NOTE: 
-There is a bug when converting from IAST to Balaram (which is caused by the way Balaram system was build) - “ṣ” is converted to “ñ”. Thus, if you convert IAST text like “puruṣa” to Balaram you will get “puruïa” (“puruña”). This is because “ñ” was also used in Balaram and thus it gets converted wrongly. Since Balaram is a legacy system and I don’t know if many people will use this program to convert IAST text to Balaram, I decided to save time and to leave this as it is for now. The workaround for such little problem is to first convert from IAST to any other system (preferably Velthuis because it allows capital letters) and then use “Swap transliterations and texts” button and select Balaram as the target transliteration. 
+**Keyboard shortcuts:**
 
-### INSTALLATION:
+| Action | Shortcut |
+|---|---|
+| Paste from clipboard | Ctrl+V |
+| Copy converted text | Ctrl+C |
+| Clear input | Ctrl+R |
+| Swap transliterations and texts | Alt+S |
+| Undo | Ctrl+Z |
+| Redo | Ctrl+Y |
+| Quit | Ctrl+Q |
+
+### Typing Sanskrit with a standard keyboard
+
+SansConverter can also be used as a typing aid. Both **Harvard-Kyoto** and **Velthuis** are pure ASCII systems — every character is typeable on a standard QWERTY keyboard with no special input methods or keyboard layouts required.
+
+To type Sanskrit text with diacritics:
+1. Select Harvard-Kyoto or Velthuis as the input system and your desired output (e.g. IAST) as the output system.
+2. Type your text in the input field using the ASCII notation.
+3. The converted text with proper diacritics appears instantly in the output field — copy it from there.
+
+**Harvard-Kyoto** example: type `kRSNa` → get `kṛṣṇa`
+
+**Velthuis** example: type `k.r.s.na` → get `kṛṣṇa`
+
+Velthuis has the advantage of supporting capital letters, making it suitable for text that mixes uppercase and lowercase. Full character schemas for both systems are available under the **Help** menu in the app.
+
+More details on Wikipedia:
+- Harvard-Kyoto: https://en.wikipedia.org/wiki/Harvard-Kyoto
+- Velthuis: https://en.wikipedia.org/wiki/Velthuis
+
+### Installation
 
 Download the latest release for your platform from the [Releases page](https://github.com/kosperun/SansConverter/releases):
-- **Windows:** download the `.zip`, extract it, and run `SansConverter.exe`. You can pin it to your Taskbar for easy access.
-- **macOS:** download the `.dmg`, open it, and drag the app to your Applications folder or Dock.
-- **Linux:** download the `.tar.gz`, extract it, and run the `SansConverter` binary.
 
-The program requires no installation.
+- **Windows:** download `SansConverter.exe` and run it. You can pin it to your Taskbar for easy access.
+- **macOS:** download the `.dmg`, open it, and drag the app to your Applications folder or Dock.
+- **Linux (Debian/Ubuntu):** download the `.deb` and install it with `sudo dpkg -i SansConverter.deb`.
+- **Linux (other distributions):** download the `.tar.gz`, extract it, and run the `SansConverter` binary.
+
+No further installation is required.
 
 **macOS note:** When opening the app for the first time, macOS may show a warning that it cannot verify the app. This is because the app is not signed with an Apple Developer certificate. To open it anyway:
 1. Try to open the app — click **Done** when the warning appears.
@@ -41,9 +70,7 @@ xattr -dr com.apple.quarantine /path/to/SansConverter.app
 
 **macOS keyboard navigation:** To use Tab for navigating between controls, go to **System Settings → Keyboard** and enable **"Use keyboard navigation to move focus between controls"**.
 
-There is some more information about transliteration systems under “Help” menu. 
-
-You can also send your feedback or reports to the address given in the “About” menu. 
+More information about each transliteration system is available under the **Help** menu. You can send feedback or bug reports directly from the **About** menu.
 
 ### SansConverter in action
 #### part 1

@@ -36,12 +36,12 @@ HK_EXT = (
     "c", "j", "d", "e", "g", "h", "i", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "y"
 )
 
-VELTHIUS = (
+VELTHUIS = (
     "aa", "ii", "uu", ".l", ".rr", ".r", ".s", '"n', "~n", ".t", ".d", ".n", '"s', ".h", ".m",
     "AA", "II", "UU", ".L", ".RR", ".R", ".S", '"N', "~N", ".T", ".D", ".N", '"S', ".H", ".M"
 )
 
-VELTHIUS_EXT = (
+VELTHUIS_EXT = (
     "AA", "II", "UU", ".L", ".RR", ".R", '"S', ".S", '"N', "~N", ".T", ".D", ".N", ".H", ".M",
     "A", "B", "C", "J", "J", "D", "E", "G", "H", "I", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U",
     "V", "Y", "aa", "ii", "uu", ".l", ".rr", ".r", '"s', ".s", '"n', "~n", ".t", ".d", ".n", ".h", ".m",
@@ -81,7 +81,7 @@ class Encodings(Enum):
     IAST = "IAST"
     BALARAM = "Balaram"
     HK = "HK"
-    VELTHIUS = "Velthius"
+    VELTHUIS = "Velthuis"
     UKR = "Cyrillic (Ukrainian)"
     RUS = "Cyrillic (Russian)"
     GAURA_TIMES = "Gaura Times (BBT)"
@@ -96,7 +96,7 @@ ROMAN_BASIC_ENCODINGS = {
     Encodings.BALARAM.value: BALARAM,
     Encodings.IAST.value: IAST,
     Encodings.HK.value: HK,
-    Encodings.VELTHIUS.value: VELTHIUS,
+    Encodings.VELTHUIS.value: VELTHUIS,
 }
 
 # 'ALL_ENCODINGS' is the mapping of the names of full versions of both Roman and Cyrillic encodings
@@ -104,7 +104,7 @@ ALL_EXT_ENCODINGS = {
     Encodings.BALARAM.value: BALARAM_EXT,
     Encodings.IAST.value: IAST_EXT,
     Encodings.HK.value: HK_EXT,
-    Encodings.VELTHIUS.value: VELTHIUS_EXT,
+    Encodings.VELTHUIS.value: VELTHUIS_EXT,
     Encodings.UKR.value: UKR,
     Encodings.RUS.value: RUS,
     Encodings.GAURA_TIMES.value: GAURA_TIMES,
