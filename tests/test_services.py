@@ -380,3 +380,35 @@ class TestEdgeCases:
 
     def test_newline_preserved(self):
         assert convert("kṛṣṇa\nrāma", IAST, BALARAM, I, B) == "kåñëa\nräma"
+
+
+# ---------------------------------------------------------------------------
+# Non-standard IAST look-alikes on input (issue #9)
+#
+# Many Gaudiya Vaiṣṇava song texts write the velar nasal ṅ (U+1E45) as the
+# Polish-style ń (U+0144). It must be accepted as an input alias for ṅ, while
+# the output stays canonical.
+# ---------------------------------------------------------------------------
+
+class TestIastInputAliases:
+
+    def test_n_acute_alias_to_iast(self):
+        # ń (U+0144) on input behaves exactly like ṅ (U+1E45)
+        assert convert("sańge", IAST_EXT, IAST_EXT, I, I) == "sańge"  # same-encoding short-circuit
+        assert convert("sańge", IAST_EXT, BALARAM_EXT, I, B) == convert("saṅge", IAST_EXT, BALARAM_EXT, I, B)
+
+    def test_n_acute_alias_to_rus(self):
+        assert convert("sańge", IAST_EXT, RUS, I, R) == "сан̇ге"
+
+    def test_capital_n_acute_alias(self):
+        assert convert("ŃA", IAST_EXT, RUS, I, R) == convert("ṄA", IAST_EXT, RUS, I, R)
+
+    def test_full_verse_line(self):
+        # "prabhu lokanātha kobe sańge loyā jābe" — no Latin ń must survive
+        out = convert("prabhu lokanātha kobe sańge loyā jābe", IAST_EXT, RUS, I, R)
+        assert "ń" not in out
+        assert "сан̇ге" in out
+
+    def test_alias_not_applied_for_non_iast_input(self):
+        # A stray ń in non-IAST input is left untouched (не our alias's job)
+        assert "ń" in convert("sańge", BALARAM_EXT, RUS, B, R)

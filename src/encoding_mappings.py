@@ -75,6 +75,14 @@ GAURA_TIMES = (
 ASPIRATED_CYRILLIC_LETTERS = ("к", "ґ", "ч", "ж", "т̣", "д̣", "т", "д", "п", "б")
 ASPIRATED_ROMAN_LETTERS = ("k", "g", "c", "j", "ṭ", "ḍ", "t", "d", "p", "b")
 
+# Non-standard look-alikes that show up in real IAST input (e.g. Gaudiya Vaiṣṇava
+# song texts), mapped to their canonical IAST form. Applied to the input string
+# only; the output stays canonical. See issue #9.
+IAST_INPUT_ALIASES = {
+    "ń": "ṅ",  # U+0144 LATIN SMALL LETTER N WITH ACUTE -> U+1E45 (velar nasal)
+    "Ń": "Ṅ",  # U+0143 -> U+1E44
+}
+
 
 # ENUMS
 class Encodings(Enum):
