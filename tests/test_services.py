@@ -380,3 +380,46 @@ class TestEdgeCases:
 
     def test_newline_preserved(self):
         assert convert("kṛṣṇa\nrāma", IAST, BALARAM, I, B) == "kåñëa\nräma"
+
+
+# ---------------------------------------------------------------------------
+# Real VedaBase Russian input (issue #7)
+#
+# Russian VedaBase writes long "ā" as Cyrillic "а"/"А" (U+0430/U+0410) + COMBINING
+# MACRON (U+0304), because Cyrillic А has no precomposed macron form in Unicode.
+# These strings are copied verbatim from vedabase.io/ru; they must convert with no
+# stray combining marks left behind.
+# ---------------------------------------------------------------------------
+
+COMBINING_MARKS = ("̄", "̣", "́", "̇", "̃", "Ā", "ā")
+
+
+def _has_orphan_marks(text):
+    """True if any combining diacritic or Latin a-macron survived a Cyrillic->Gaura pass."""
+    return any(mark in text for mark in COMBINING_MARKS)
+
+
+class TestVedabaseRussianLongA:
+
+    def test_long_a_lowercase_converts(self):
+        # "ува̄ча" = у в а + U+0304 ч а  -> the macron must be consumed
+        out = convert("ува̄ча", RUS, GAURA_TIMES, R, G)
+        assert not _has_orphan_marks(out)
+        assert out == "увча"
+
+    def test_long_a_uppercase_word_initial(self):
+        # "А̄ди" = А + U+0304 д и  (word-initial capital long A)
+        out = convert("А̄ди", RUS, GAURA_TIMES, R, G)
+        assert not _has_orphan_marks(out)
+        assert out == "ди"
+
+    def test_full_verse_no_orphan_marks(self):
+        # Bhagavad-gītā 1.1, first line, verbatim from vedabase.io/ru
+        verse = "дхр̣тара̄шт̣ра ува̄ча"
+        out = convert(verse, RUS, GAURA_TIMES, R, G)
+        assert not _has_orphan_marks(out)
+
+    def test_long_a_roundtrip_rus_iast(self):
+        # RUS long-a must map to IAST U+0101 and back to the Cyrillic combining form
+        assert convert("а̄", RUS, IAST_EXT, R, I) == "ā"
+        assert convert("ā", IAST_EXT, RUS, I, R) == "а̄"
