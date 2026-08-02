@@ -49,9 +49,9 @@ VELTHUIS_EXT = (
 )
 
 UKR = (
-    "Ā", "Ī", "Ӯ", "Л̣", "Р̣̄", "Р̣", "Ш́", "Ш", "Н̇", "Н̃", "Т̣", "Д̣", "Н̣", "Х̣", "М̇", "А", "Б", "Ч",
+    "А̄", "Ī", "Ӯ", "Л̣", "Р̣̄", "Р̣", "Ш́", "Ш", "Н̇", "Н̃", "Т̣", "Д̣", "Н̣", "Х̣", "М̇", "А", "Б", "Ч",
     "Дж", "ДЖ", "Д", "Е", "Ґ", "Х", "І", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "В",
-    "Й", "ā", "ī", "ӯ", "л̣", "р̣̄", "р̣", "ш́", "ш", "н̇", "н̃", "т̣", "д̣", "н̣", "х̣", "м̇", "а", "б",
+    "Й", "а̄", "ī", "ӯ", "л̣", "р̣̄", "р̣", "ш́", "ш", "н̇", "н̃", "т̣", "д̣", "н̣", "х̣", "м̇", "а", "б",
     "ч", "дж", "д", "е", "ґ", "х", "і", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "в", "й"
 )
 
@@ -92,7 +92,11 @@ class Encodings(Enum):
 
 
 # 'CYRILLIC_ENCODINGS' is the list of Cyrillic encodings names
-CYRILLIC_ENCODINGS = (Encodings.UKR.value, Encodings.RUS.value, Encodings.GAURA_TIMES.value)
+CYRILLIC_ENCODINGS = (
+    Encodings.UKR.value,
+    Encodings.RUS.value,
+    Encodings.GAURA_TIMES.value,
+)
 RUSSIAN_ENCODINGS = (Encodings.RUS.value, Encodings.GAURA_TIMES.value)
 
 # 'ROMAN_ENCODINGS' is the list of Roman encodings names
