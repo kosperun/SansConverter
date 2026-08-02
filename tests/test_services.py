@@ -13,18 +13,24 @@ of the tuples (indices 0-14).
 import pytest
 
 from encoding_mappings import (
-    BALARAM, BALARAM_EXT,
-    IAST, IAST_EXT,
-    VELTHUIS, VELTHUIS_EXT,
-    HK, HK_EXT,
-    RUS, UKR, GAURA_TIMES,
     ALL_EXT_ENCODINGS,
+    BALARAM,
+    BALARAM_EXT,
+    GAURA_TIMES,
+    HK,
+    HK_EXT,
+    IAST,
+    IAST_EXT,
+    RUS,
+    UKR,
+    VELTHUIS,
+    VELTHUIS_EXT,
     Encodings,
 )
 from service import convert
 
 B = Encodings.BALARAM.value
-I = Encodings.IAST.value
+I = Encodings.IAST.value  # noqa E741
 H = Encodings.HK.value
 V = Encodings.VELTHUIS.value
 U = Encodings.UKR.value
@@ -46,8 +52,8 @@ def full(t):
 # Roman basic tuples (IAST, BALARAM, VELTHUIS, HK) — all 15 diacritical chars
 # ---------------------------------------------------------------------------
 
-class TestRomanBasic:
 
+class TestRomanBasic:
     def test_iast_to_balaram(self):
         assert convert(full(IAST), IAST, BALARAM, I, B) == full(BALARAM)
 
@@ -89,8 +95,8 @@ class TestRomanBasic:
 # Roman extended tuples — all chars including uppercase
 # ---------------------------------------------------------------------------
 
-class TestRomanExt:
 
+class TestRomanExt:
     def test_iast_ext_to_balaram_ext(self):
         assert convert(full(IAST_EXT), IAST_EXT, BALARAM_EXT, I, B) == full(BALARAM_EXT)
 
@@ -114,6 +120,7 @@ class TestRomanExt:
 # Roman extended -> Cyrillic (space-separated to avoid Russian е/э
 # word-boundary logic firing between adjacent characters)
 # ---------------------------------------------------------------------------
+
 
 class TestRomanToCyrillic:
     # Space-separated input is used to cover all characters, but two side effects
@@ -154,8 +161,8 @@ class TestRomanToCyrillic:
 # Cyrillic -> Roman extended
 # ---------------------------------------------------------------------------
 
-class TestCyrillicToRoman:
 
+class TestCyrillicToRoman:
     def test_ukr_to_iast_ext(self):
         assert convert(full(UKR), UKR, IAST_EXT, U, I) == full(IAST_EXT)
 
@@ -185,8 +192,8 @@ class TestCyrillicToRoman:
 # Cyrillic <-> Cyrillic
 # ---------------------------------------------------------------------------
 
-class TestCyrillicToCyrillic:
 
+class TestCyrillicToCyrillic:
     def test_ukr_to_rus(self):
         # UKR has Дж and ДЖ as separate entries; space-separated means Дж is
         # followed by a space so _convert_j_properly does not upgrade it.
@@ -207,7 +214,9 @@ class TestCyrillicToCyrillic:
         assert convert(" ".join(GAURA_TIMES), GAURA_TIMES, UKR, G, U) == " ".join(UKR)
 
     def test_rus_to_gaura_times(self):
-        assert convert(" ".join(RUS), RUS, GAURA_TIMES, R, G) == " ".join(GAURA_TIMES).replace(" Е ", " Э ").replace(" е ", " э ")
+        assert convert(" ".join(RUS), RUS, GAURA_TIMES, R, G) == " ".join(GAURA_TIMES).replace(" Е ", " Э ").replace(
+            " е ", " э "
+        )
 
     def test_gaura_times_to_rus(self):
         # е at word start becomes э in Russian
@@ -219,8 +228,8 @@ class TestCyrillicToCyrillic:
 # Gaura Times -> Roman
 # ---------------------------------------------------------------------------
 
-class TestGauraTimesToRoman:
 
+class TestGauraTimesToRoman:
     def test_gaura_times_to_iast_ext(self):
         assert convert(" ".join(GAURA_TIMES), GAURA_TIMES, IAST_EXT, G, I) == " ".join(IAST_EXT)
 
@@ -238,8 +247,8 @@ class TestGauraTimesToRoman:
 # Identity: same encoding returns input unchanged
 # ---------------------------------------------------------------------------
 
-class TestIdentity:
 
+class TestIdentity:
     def test_balaram(self):
         assert convert(full(BALARAM), BALARAM, BALARAM, B, B) == full(BALARAM)
 
@@ -266,27 +275,29 @@ class TestIdentity:
 # IAST -> Balaram ṣ/ñ collision (the previously broken case)
 # ---------------------------------------------------------------------------
 
-class TestJCyrillic:
 
-    @pytest.mark.parametrize("inp,enc_out,expected", [
-        ("jagannatha", U, "джаґаннатга"),
-        ("Jagannatha", U, "Джаґаннатга"),
-        ("JAGANNATHA", U, "ДЖАҐАННАТГА"),
-        ("jagannatha", R, "джаганнатха"),
-        ("Jagannatha", R, "Джаганнатха"),
-        ("JAGANNATHA", R, "ДЖАГАННАТХА"),
-    ])
+class TestJCyrillic:
+    @pytest.mark.parametrize(
+        "inp,enc_out,expected",
+        [
+            ("jagannatha", U, "джаґаннатга"),
+            ("Jagannatha", U, "Джаґаннатга"),
+            ("JAGANNATHA", U, "ДЖАҐАННАТГА"),
+            ("jagannatha", R, "джаганнатха"),
+            ("Jagannatha", R, "Джаганнатха"),
+            ("JAGANNATHA", R, "ДЖАГАННАТХА"),
+        ],
+    )
     def test_j_capitalisation(self, inp, enc_out, expected):
         assert convert(inp, IAST_EXT, ALL_EXT_ENCODINGS[enc_out], I, enc_out) == expected
 
     def test_mixed_sequence(self):
-        inp      = "JJjJJjJJjJJjJjJjJjJjJjJ"
+        inp = "JJjJJjJJjJJjJjJjJjJjJjJ"
         expected = "ДЖДжджДЖДжджДЖДжджДЖДжджДжджДжджДжджДжджДжджДж"
         assert convert(inp, IAST_EXT, UKR, I, U) == expected
 
 
 class TestIASTToBalaram:
-
     def test_sibilant_only(self):
         assert convert("puruṣa", IAST, BALARAM, I, B) == "puruña"
 
@@ -307,25 +318,28 @@ class TestIASTToBalaram:
 # Velthuis multi-character token tests
 # ---------------------------------------------------------------------------
 
-class TestVelthuisTokens:
 
-    @pytest.mark.parametrize("velthuis,expected_iast", [
-        ("aa",      "ā"),
-        ("ii",      "ī"),
-        ("uu",      "ū"),
-        (".l",      "ḷ"),
-        (".rr",     "ṝ"),
-        (".r",      "ṛ"),
-        (".s",      "ṣ"),
-        ('"n',      "ṅ"),
-        ("~n",      "ñ"),
-        (".t",      "ṭ"),
-        (".d",      "ḍ"),
-        (".n",      "ṇ"),
-        ('"s',      "ś"),
-        (".h",      "ḥ"),
-        (".m",      "ṁ"),
-    ])
+class TestVelthuisTokens:
+    @pytest.mark.parametrize(
+        "velthuis,expected_iast",
+        [
+            ("aa", "ā"),
+            ("ii", "ī"),
+            ("uu", "ū"),
+            (".l", "ḷ"),
+            (".rr", "ṝ"),
+            (".r", "ṛ"),
+            (".s", "ṣ"),
+            ('"n', "ṅ"),
+            ("~n", "ñ"),
+            (".t", "ṭ"),
+            (".d", "ḍ"),
+            (".n", "ṇ"),
+            ('"s', "ś"),
+            (".h", "ḥ"),
+            (".m", "ṁ"),
+        ],
+    )
     def test_each_token_to_iast(self, velthuis, expected_iast):
         assert convert(velthuis, VELTHUIS, IAST, V, I) == expected_iast
 
@@ -344,6 +358,7 @@ class TestVelthuisTokens:
 # ---------------------------------------------------------------------------
 # Anusvara toggle
 # ---------------------------------------------------------------------------
+
 
 class TestAnusvara:
     # change_anusvara fires after translation, so it only takes effect when the
@@ -367,8 +382,8 @@ class TestAnusvara:
 # Edge cases
 # ---------------------------------------------------------------------------
 
-class TestEdgeCases:
 
+class TestEdgeCases:
     def test_empty_string(self):
         assert convert("", IAST, BALARAM, I, B) == ""
 
@@ -400,7 +415,6 @@ def _has_orphan_marks(text):
 
 
 class TestVedabaseRussianLongA:
-
     def test_long_a_lowercase_converts(self):
         # "ува̄ча" = у в а + U+0304 ч а  -> the macron must be consumed
         out = convert("ува̄ча", RUS, GAURA_TIMES, R, G)
@@ -419,7 +433,20 @@ class TestVedabaseRussianLongA:
         out = convert(verse, RUS, GAURA_TIMES, R, G)
         assert not _has_orphan_marks(out)
 
-    def test_long_a_roundtrip_rus_iast(self):
+    @pytest.mark.parametrize(
+        "incoming, out",
+        [
+            (chr(int("0430", 16)) + chr(int("0304", 16)), chr(int("0101", 16))),
+            (chr(int("0410", 16)) + chr(int("0304", 16)), chr(int("0100", 16))),
+        ],
+        ids=["Lowercase a", "Uppercase A"],
+    )
+    def test_long_a_roundtrip_rus_iast(self, incoming, out):
         # RUS long-a must map to IAST U+0101 and back to the Cyrillic combining form
-        assert convert("а̄", RUS, IAST_EXT, R, I) == "ā"
-        assert convert("ā", IAST_EXT, RUS, I, R) == "а̄"
+        # U+0430 is CYRILLIC SMALL LETTER A
+        # U+0410 is CYRILLIC CAPITAL LETTER A
+        # U+0304 is COMBINING MACRON
+        # U+0101 is LATIN SMALL LETTER A WITH MACRON
+        # U+0100 is LATIN CAPITAL LETTER A WITH MACRON
+        assert convert(incoming, RUS, IAST_EXT, R, I) == out
+        assert convert(out, IAST_EXT, RUS, I, R) == incoming
