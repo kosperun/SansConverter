@@ -34,9 +34,7 @@ class UiSelectEncodingsDialog(QDialog):
         self.mainLayout.addWidget(self.listWidget)
 
         self.buttonBox = QDialogButtonBox(self)
-        self.buttonBox.setStandardButtons(
-            QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok
-        )
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
         self.mainLayout.addWidget(self.buttonBox)
 
         self._populate_list()
@@ -52,9 +50,7 @@ class UiSelectEncodingsDialog(QDialog):
         for encoding in selected + unselected:
             item = QListWidgetItem(encoding)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            item.setCheckState(
-                Qt.CheckState.Checked if encoding in selected else Qt.CheckState.Unchecked
-            )
+            item.setCheckState(Qt.CheckState.Checked if encoding in selected else Qt.CheckState.Unchecked)
             self.listWidget.addItem(item)
 
     def get_selected_encodings(self):

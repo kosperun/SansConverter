@@ -55,7 +55,7 @@ def convert(
         j = 0
         while j < len(string):
             for key in sorted_keys:
-                if string[j:j + len(key)] == key:
+                if string[j : j + len(key)] == key:
                     result.append(translation[key])
                     j += len(key)
                     break
@@ -166,7 +166,7 @@ def _convert_j_properly(string: str) -> str:
     result = []
     i = 0
     while i < len(string):
-        if string[i:i + 2] == "Дж":
+        if string[i : i + 2] == "Дж":
             next_is_upper = (i + 2 < len(string)) and string[i + 2].isupper()
             if next_is_upper:
                 result.append("ДЖ")

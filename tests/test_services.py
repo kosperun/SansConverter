@@ -449,7 +449,8 @@ class TestVedabaseRussianLongA:
         # U+0100 is LATIN CAPITAL LETTER A WITH MACRON
         assert convert(incoming, RUS, IAST_EXT, R, I) == out
         assert convert(out, IAST_EXT, RUS, I, R) == incoming
-        
+
+
 # ---------------------------------------------------------------------------
 # Non-standard IAST look-alikes on input (issue #9)
 #
@@ -458,8 +459,8 @@ class TestVedabaseRussianLongA:
 # the output stays canonical.
 # ---------------------------------------------------------------------------
 
-class TestIastInputAliases:
 
+class TestIastInputAliases:
     def test_n_acute_alias_to_iast(self):
         # ń (U+0144) on input behaves exactly like ṅ (U+1E45)
         assert convert("sańge", IAST_EXT, IAST_EXT, I, I) == "sańge"  # same-encoding short-circuit
