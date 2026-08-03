@@ -1,6 +1,7 @@
 from encoding_mappings import (
     ASPIRATED_CYRILLIC_LETTERS,
     ASPIRATED_ROMAN_LETTERS,
+    IAST_INPUT_ALIASES,
     RUSSIAN_ENCODINGS,
     Encodings,
 )
@@ -30,6 +31,12 @@ def convert(
 
     if input_encoding == output_encoding:
         return string
+
+    # Normalize common non-standard IAST look-alikes to their canonical form before
+    # matching (e.g. "ń" U+0144 used for the velar nasal "ṅ" U+1E45 in many song texts).
+    if input_encoding == Encodings.IAST.value:
+        for wrong, right in IAST_INPUT_ALIASES.items():
+            string = string.replace(wrong, right)
 
     # Build a lookup so we can translate in a single left-to-right pass.
     # str.replace() in a loop causes collisions when one encoding reuses a
