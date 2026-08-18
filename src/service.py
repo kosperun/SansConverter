@@ -1,10 +1,14 @@
 from encoding_mappings import (
     ASPIRATED_CYRILLIC_LETTERS,
+    ASPIRATED_CYRILLIC_LETTERS_VOICED,
+    ASPIRATED_CYRILLIC_LETTERS_VOICELESS,
     ASPIRATED_ROMAN_LETTERS,
     IAST_INPUT_ALIASES,
     RUSSIAN_ENCODINGS,
     Encodings,
 )
+
+UKR_ENCODINGS = (Encodings.UKR_G.value, Encodings.UKR_H.value)
 
 
 def convert(
@@ -70,7 +74,7 @@ def convert(
     if change_anusvara:
         string = _change_anusvara_type(string)
 
-    if input_encoding == Encodings.UKR.value or output_encoding == Encodings.UKR.value:
+    if input_encoding in UKR_ENCODINGS or output_encoding in UKR_ENCODINGS:
         string = _convert_ukrainian(string, input_encoding, output_encoding)
 
     if input_encoding in RUSSIAN_ENCODINGS and output_encoding not in RUSSIAN_ENCODINGS:
@@ -88,10 +92,16 @@ def convert(
 
 def _convert_ukrainian(string, input_encoding, output_encoding):
     # 'temp_symbols' is a temporary list of all the symbols in our converted text
-    temp_symbols = _convert_aspirated_cyrillic_properly(string)
-    # This is only for Ukrainian into Russian (change dga into dha)
-    if input_encoding == Encodings.UKR.value and output_encoding in RUSSIAN_ENCODINGS:
+    temp_symbols = _convert_aspirated_cyrillic_properly(string, output_encoding)
+    # This is only for Ukrainian into Russian (change dga into dha) — Russian
+    # has no г/х aspirate distinction, so all 10 aspirated stops apply.
+    if input_encoding in UKR_ENCODINGS and output_encoding in RUSSIAN_ENCODINGS:
         temp_symbols = _change_ga_to_ha(temp_symbols)
+    # UKR_G's aspirated stops are already resolved to г by the base table +
+    # the fixup above; converting into UKR_H additionally needs the 5
+    # voiceless ones rewritten to х (voiced ones stay г in both schemes).
+    elif input_encoding == Encodings.UKR_G.value and output_encoding == Encodings.UKR_H.value:
+        temp_symbols = _change_ga_to_ha(temp_symbols, ASPIRATED_CYRILLIC_LETTERS_VOICELESS)
     converted_text = "".join(temp_symbols)
     return converted_text
 
@@ -106,7 +116,7 @@ def _change_anusvara_type(string):
 
 def _replace_russian_e(string, output_encoding):
     # Replace russian e with Ukrainian e
-    if output_encoding == Encodings.UKR.value:
+    if output_encoding in UKR_ENCODINGS:
         string = string.replace("э", "е")
         string = string.replace("Э", "Е")
     # Replace russian e with Roman e
@@ -116,31 +126,53 @@ def _replace_russian_e(string, output_encoding):
     return string
 
 
-def _change_ga_to_ha(temp_symbols: list) -> list:
-    """Replace г with х after aspirated consonants (Ukrainian dga → dha pattern)"""
+def _ends_with_letter(temp_symbols: list, i: int, letters: tuple) -> bool:
+    """True if the consonant ending at index i (1 codepoint, or 2 for a
+    retroflex letter with a combining dot below, e.g. "т̣") is in 'letters'."""
+    if temp_symbols[i].lower() in letters:
+        return True
+    if i > 0 and (temp_symbols[i - 1] + temp_symbols[i]).lower() in letters:
+        return True
+    return False
+
+
+def _change_ga_to_ha(temp_symbols: list, letters: tuple = ASPIRATED_CYRILLIC_LETTERS) -> list:
+    """Replace г with х after aspirated consonants (Ukrainian dga → dha pattern).
+    'letters' narrows which aspirated stops this applies to — Russian has no
+    г/х aspirate distinction so all 10 apply; UKR_G -> UKR_H only rewrites the
+    5 voiceless stops, since voiced stops keep г in both Ukrainian schemes."""
     for i in range(len(temp_symbols) - 1):
-        if temp_symbols[i].lower() in ASPIRATED_CYRILLIC_LETTERS and temp_symbols[i + 1] == "г":
+        if not _ends_with_letter(temp_symbols, i, letters):
+            continue
+        if temp_symbols[i + 1] == "г":
             temp_symbols[i + 1] = "х"
-        elif temp_symbols[i].lower() in ASPIRATED_CYRILLIC_LETTERS and temp_symbols[i + 1] == "Г":
+        elif temp_symbols[i + 1] == "Г":
             temp_symbols[i + 1] = "Х"
     return temp_symbols
 
 
-def _convert_aspirated_cyrillic_properly(string: str) -> list:
+def _convert_aspirated_cyrillic_properly(string: str, output_encoding: str = None) -> list:
     """Fix wrong conversions that happen due to overlapping symbols"""
     # 'temp_symbols' is a temporary list of all the symbols in our converted text
     # 'ASPIRATED_CYRILLIC_LETTERS' and 'ASPIRATED_ROMAN_LETTERS' are list of letters corresponding
     # to the aspirated consonants in Sanskrit (Cyrillic and Roman).
+    # In UKR_H, voiceless aspirates (kh, ch, .th, th, ph) keep the naive "х"
+    # instead of being rewritten to "г"; voiced aspirates always become "г".
+    aspirated_to_g = (
+        ASPIRATED_CYRILLIC_LETTERS_VOICED if output_encoding == Encodings.UKR_H.value else ASPIRATED_CYRILLIC_LETTERS
+    )
     temp_symbols = list(string)
     for i in range(len(temp_symbols) - 1):
-        if temp_symbols[i].lower() in ASPIRATED_CYRILLIC_LETTERS and temp_symbols[i + 1] == "х":
-            temp_symbols[i + 1] = "г"
-        elif temp_symbols[i].lower() in ASPIRATED_CYRILLIC_LETTERS and temp_symbols[i + 1] == "Х":
-            temp_symbols[i + 1] = "Г"
-        if temp_symbols[i].lower() in ASPIRATED_ROMAN_LETTERS and temp_symbols[i + 1] == "г":
-            temp_symbols[i + 1] = "h"
-        elif temp_symbols[i].lower() in ASPIRATED_ROMAN_LETTERS and temp_symbols[i + 1] == "Г":
-            temp_symbols[i + 1] = "H"
+        if _ends_with_letter(temp_symbols, i, aspirated_to_g):
+            if temp_symbols[i + 1] == "х":
+                temp_symbols[i + 1] = "г"
+            elif temp_symbols[i + 1] == "Х":
+                temp_symbols[i + 1] = "Г"
+        if _ends_with_letter(temp_symbols, i, ASPIRATED_ROMAN_LETTERS):
+            if temp_symbols[i + 1] == "г":
+                temp_symbols[i + 1] = "h"
+            elif temp_symbols[i + 1] == "Г":
+                temp_symbols[i + 1] = "H"
     return temp_symbols
 
 

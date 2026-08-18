@@ -48,12 +48,18 @@ VELTHUIS_EXT = (
     "a", "b", "c", "j", "d", "e", "g", "h", "i", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "y"
 )
 
-UKR = (
+UKR_G = (
     "А̄", "Ī", "Ӯ", "Л̣", "Р̣̄", "Р̣", "Ш́", "Ш", "Н̇", "Н̃", "Т̣", "Д̣", "Н̣", "Х̣", "М̇", "А", "Б", "Ч",
     "Дж", "ДЖ", "Д", "Е", "Ґ", "Х", "І", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "В",
     "Й", "а̄", "ı̄", "ӯ", "л̣", "р̣̄", "р̣", "ш́", "ш", "н̇", "н̃", "т̣", "д̣", "н̣", "х̣", "м̇", "а", "б",
     "ч", "дж", "д", "е", "ґ", "х", "і", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "в", "й"
 )
+
+# Identical to UKR_G. The two schemes only differ in how voiceless aspirates
+# (kh, ch, .th, th, ph) render — г in UKR_G, х in UKR_H — which is applied as
+# post-processing in service.py (see ASPIRATED_CYRILLIC_LETTERS_VOICELESS),
+# not in this base table.
+UKR_H = UKR_G
 
 # NOTE: long "а̄"/"А̄" use the Cyrillic base (U+0430/U+0410) + COMBINING MACRON
 # (U+0304), which is what VedaBase Russian emits. Cyrillic А has no precomposed
@@ -79,6 +85,14 @@ GAURA_TIMES = (
 ASPIRATED_CYRILLIC_LETTERS = ("к", "ґ", "ч", "ж", "т̣", "д̣", "т", "д", "п", "б")
 ASPIRATED_ROMAN_LETTERS = ("k", "g", "c", "j", "ṭ", "ḍ", "t", "d", "p", "b")
 
+# Voiced aspirates (gh, jh, .dh, dh, bh) always render with г, in both UKR_G
+# and UKR_H. 'ж' catches jh because the base tables emit "дж" for j, so only
+# the "ж" half of that digraph sits adjacent to the aspirate's naive "х".
+# Voiceless aspirates (kh, ch, .th, th, ph) render with г in UKR_G but х in UKR_H,
+# so this list (unlike ASPIRATED_CYRILLIC_LETTERS) excludes them.
+ASPIRATED_CYRILLIC_LETTERS_VOICED = ("ґ", "ж", "д̣", "д", "б")
+ASPIRATED_CYRILLIC_LETTERS_VOICELESS = ("к", "ч", "т̣", "т", "п")
+
 # Non-standard look-alikes that show up in real IAST input (e.g. Gaudiya Vaiṣṇava
 # song texts), mapped to their canonical IAST form. Applied to the input string
 # only; the output stays canonical. See issue #9.
@@ -94,14 +108,16 @@ class Encodings(Enum):
     BALARAM = "Balaram"
     HK = "HK"
     VELTHUIS = "Velthuis"
-    UKR = "Cyrillic (Ukrainian)"
-    RUS = "Cyrillic (Russian)"
+    UKR_G = "Ukrainian (кга)"
+    UKR_H = "Ukrainian (кха)"
+    RUS = "Russian"
     GAURA_TIMES = "Gaura Times (BBT)"
 
 
 # 'CYRILLIC_ENCODINGS' is the list of Cyrillic encodings names
 CYRILLIC_ENCODINGS = (
-    Encodings.UKR.value,
+    Encodings.UKR_G.value,
+    Encodings.UKR_H.value,
     Encodings.RUS.value,
     Encodings.GAURA_TIMES.value,
 )
@@ -121,7 +137,8 @@ ALL_EXT_ENCODINGS = {
     Encodings.IAST.value: IAST_EXT,
     Encodings.HK.value: HK_EXT,
     Encodings.VELTHUIS.value: VELTHUIS_EXT,
-    Encodings.UKR.value: UKR,
+    Encodings.UKR_G.value: UKR_G,
+    Encodings.UKR_H.value: UKR_H,
     Encodings.RUS.value: RUS,
     Encodings.GAURA_TIMES.value: GAURA_TIMES,
 }
