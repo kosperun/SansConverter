@@ -11,6 +11,7 @@ setup(
     description="A converter for different Sanskrit transliteration systems",
     author="Kostiantyn Perun",
     author_email="kosperun@gmail.com",
+    license="MIT",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     install_requires=[
