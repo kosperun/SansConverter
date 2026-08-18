@@ -1,8 +1,13 @@
+import pathlib
+
 from setuptools import find_packages, setup
+
+version_globals = {}
+exec((pathlib.Path(__file__).parent / "src" / "_version.py").read_text(), version_globals)
 
 setup(
     name="sansconverter",
-    version="2.0",
+    version=version_globals["__version__"],
     description="A converter for different Sanskrit transliteration systems",
     author="Kostiantyn Perun",
     author_email="kosperun@gmail.com",

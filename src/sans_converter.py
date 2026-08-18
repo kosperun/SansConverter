@@ -1,9 +1,11 @@
 """The main module for the app logic"""
 
 import sys
+import webbrowser
 
 from PyQt6 import QtCore, QtWidgets
 
+from _version import __version__
 from encoding_mappings import (
     ALL_EXT_ENCODINGS,
     CYRILLIC_ENCODINGS,
@@ -13,6 +15,7 @@ from encoding_mappings import (
     Encodings,
 )
 from service import convert
+from update_checker import check_for_update
 from windows.about import UiAboutDialog
 from windows.converter import Ui_SansConverter
 from windows.help import UiHelpDialog
@@ -25,6 +28,15 @@ RENAMED_ENCODINGS = {
     "Cyrillic (Ukrainian)": Encodings.UKR_G.value,
     "Cyrillic (Russian)": Encodings.RUS.value,
 }
+
+
+class UpdateCheckWorker(QtCore.QThread):
+    """Runs the network-bound update check off the UI thread."""
+
+    update_found = QtCore.pyqtSignal(object)
+
+    def run(self):
+        self.update_found.emit(check_for_update(__version__))
 
 
 class SansConverter(QtWidgets.QMainWindow):
@@ -95,6 +107,33 @@ class SansConverter(QtWidgets.QMainWindow):
         self.ui.actionTransliteration_help.triggered.connect(self.open_help)
         self.ui.actionAbout_SansConverter.triggered.connect(self.open_about)
         self.show()
+
+        self.update_check_worker = UpdateCheckWorker()
+        self.update_check_worker.update_found.connect(self.on_update_check_finished)
+        self.update_check_worker.start()
+
+    def on_update_check_finished(self, update_info) -> None:
+        """
+        Shows an alert if a newer release is available and the user hasn't
+        already chosen to skip that version.
+        """
+        if update_info is None:
+            return
+        if self.settings.value("skipped_update_version") == update_info.version:
+            return
+
+        message_box = QtWidgets.QMessageBox(self)
+        message_box.setWindowTitle("Update available")
+        message_box.setText(f"SansConverter {update_info.version} is available (you have {__version__}).")
+        download_button = message_box.addButton("Download", QtWidgets.QMessageBox.ButtonRole.AcceptRole)
+        message_box.addButton("Skip this version", QtWidgets.QMessageBox.ButtonRole.RejectRole)
+        message_box.addButton("Remind me later", QtWidgets.QMessageBox.ButtonRole.NoRole)
+        message_box.exec()
+
+        if message_box.clickedButton() == download_button:
+            webbrowser.open(update_info.download_url)
+        elif message_box.clickedButton().text() == "Skip this version":
+            self.settings.setValue("skipped_update_version", update_info.version)
 
     def clear_input(self):
         """
