@@ -18,6 +18,14 @@ from windows.converter import Ui_SansConverter
 from windows.help import UiHelpDialog
 from windows.select_encodings import UiSelectEncodingsDialog
 
+# Encoding display names saved to QSettings under old versions of the app.
+# Applied on load so existing users' saved encoding selections carry over
+# instead of silently disappearing after the rename.
+RENAMED_ENCODINGS = {
+    "Cyrillic (Ukrainian)": Encodings.UKR_G.value,
+    "Cyrillic (Russian)": Encodings.RUS.value,
+}
+
 
 class SansConverter(QtWidgets.QMainWindow):
     """This is the main class with all the logic and connections between the GUI parts and class methods"""
@@ -34,6 +42,7 @@ class SansConverter(QtWidgets.QMainWindow):
         # Read saved settings for "Use ṃ", original and target encodings, window
         # size and position:
         self.selected_encodings = self.settings.value("selected_encodings", [])
+        self.selected_encodings = [RENAMED_ENCODINGS.get(e, e) for e in self.selected_encodings]
 
         if not self.selected_encodings:
             self.selected_encodings = self.all_encodings
@@ -41,8 +50,14 @@ class SansConverter(QtWidgets.QMainWindow):
         else:
             self.update_comboboxes()
 
-        self.ui.comboBox.setCurrentText(self.settings.value("input_encoding_name"))
-        self.ui.comboBox_2.setCurrentText(self.settings.value("output_encoding_name"))
+        input_encoding_name = RENAMED_ENCODINGS.get(
+            self.settings.value("input_encoding_name"), self.settings.value("input_encoding_name")
+        )
+        output_encoding_name = RENAMED_ENCODINGS.get(
+            self.settings.value("output_encoding_name"), self.settings.value("output_encoding_name")
+        )
+        self.ui.comboBox.setCurrentText(input_encoding_name)
+        self.ui.comboBox_2.setCurrentText(output_encoding_name)
         self.ui.checkBox.setChecked(self.settings.value("Use m", type=bool))
         self.resize(self.settings.value("WindowSize", QtCore.QSize(620, 550)))
         self.move(self.settings.value("Position", QtCore.QPoint(600, 230)))
