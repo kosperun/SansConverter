@@ -22,7 +22,8 @@ from encoding_mappings import (
     IAST,
     IAST_EXT,
     RUS,
-    UKR,
+    UKR_G,
+    UKR_H,
     VELTHUIS,
     VELTHUIS_EXT,
     Encodings,
@@ -33,7 +34,8 @@ B = Encodings.BALARAM.value
 I = Encodings.IAST.value  # noqa E741
 H = Encodings.HK.value
 V = Encodings.VELTHUIS.value
-U = Encodings.UKR.value
+UG = Encodings.UKR_G.value
+UH = Encodings.UKR_H.value
 R = Encodings.RUS.value
 G = Encodings.GAURA_TIMES.value
 
@@ -137,24 +139,24 @@ class TestRomanToCyrillic:
         assert convert(" ".join(IAST_EXT), IAST_EXT, RUS, I, R) == expected
 
     def test_iast_ext_to_ukr(self):
-        expected = " ".join(UKR).replace("Дж ДЖ", "Дж Дж")
-        assert convert(" ".join(IAST_EXT), IAST_EXT, UKR, I, U) == expected
+        expected = " ".join(UKR_G).replace("Дж ДЖ", "Дж Дж")
+        assert convert(" ".join(IAST_EXT), IAST_EXT, UKR_G, I, UG) == expected
 
     def test_balaram_ext_to_rus(self):
         expected = " ".join(RUS).replace("Дж ДЖ", "Дж Дж").replace(" Е ", " Э ").replace(" е ", " э ")
         assert convert(" ".join(BALARAM_EXT), BALARAM_EXT, RUS, B, R) == expected
 
     def test_balaram_ext_to_ukr(self):
-        expected = " ".join(UKR).replace("Дж ДЖ", "Дж Дж")
-        assert convert(" ".join(BALARAM_EXT), BALARAM_EXT, UKR, B, U) == expected
+        expected = " ".join(UKR_G).replace("Дж ДЖ", "Дж Дж")
+        assert convert(" ".join(BALARAM_EXT), BALARAM_EXT, UKR_G, B, UG) == expected
 
     def test_velthuis_ext_to_rus(self):
         expected = " ".join(RUS).replace("Дж ДЖ", "Дж Дж").replace(" Е ", " Э ").replace(" е ", " э ")
         assert convert(" ".join(VELTHUIS_EXT), VELTHUIS_EXT, RUS, V, R) == expected
 
     def test_velthuis_ext_to_ukr(self):
-        expected = " ".join(UKR).replace("Дж ДЖ", "Дж Дж")
-        assert convert(" ".join(VELTHUIS_EXT), VELTHUIS_EXT, UKR, V, U) == expected
+        expected = " ".join(UKR_G).replace("Дж ДЖ", "Дж Дж")
+        assert convert(" ".join(VELTHUIS_EXT), VELTHUIS_EXT, UKR_G, V, UG) == expected
 
 
 # ---------------------------------------------------------------------------
@@ -164,16 +166,16 @@ class TestRomanToCyrillic:
 
 class TestCyrillicToRoman:
     def test_ukr_to_iast_ext(self):
-        assert convert(full(UKR), UKR, IAST_EXT, U, I) == full(IAST_EXT)
+        assert convert(full(UKR_G), UKR_G, IAST_EXT, UG, I) == full(IAST_EXT)
 
     def test_ukr_to_balaram_ext(self):
-        assert convert(full(UKR), UKR, BALARAM_EXT, U, B) == full(BALARAM_EXT)
+        assert convert(full(UKR_G), UKR_G, BALARAM_EXT, UG, B) == full(BALARAM_EXT)
 
     def test_ukr_to_velthuis_ext(self):
-        assert convert(full(UKR), UKR, VELTHUIS_EXT, U, V) == full(VELTHUIS_EXT)
+        assert convert(full(UKR_G), UKR_G, VELTHUIS_EXT, UG, V) == full(VELTHUIS_EXT)
 
     def test_ukr_to_hk_ext(self):
-        assert convert(full(UKR), UKR, HK_EXT, U, H) == full(HK_EXT)
+        assert convert(full(UKR_G), UKR_G, HK_EXT, UG, H) == full(HK_EXT)
 
     def test_rus_to_iast_ext(self):
         assert convert(" ".join(RUS), RUS, IAST_EXT, R, I) == " ".join(IAST_EXT)
@@ -195,23 +197,23 @@ class TestCyrillicToRoman:
 
 class TestCyrillicToCyrillic:
     def test_ukr_to_rus(self):
-        # UKR has Дж and ДЖ as separate entries; space-separated means Дж is
+        # UKR_G has Дж and ДЖ as separate entries; space-separated means Дж is
         # followed by a space so _convert_j_properly does not upgrade it.
         # е at word start becomes э in Russian.
         expected = " ".join(RUS).replace(" Е ", " Э ").replace(" е ", " э ")
-        assert convert(" ".join(UKR), UKR, RUS, U, R) == expected
+        assert convert(" ".join(UKR_G), UKR_G, RUS, UG, R) == expected
 
     def test_rus_to_ukr(self):
-        assert convert(" ".join(RUS), RUS, UKR, R, U) == " ".join(UKR)
+        assert convert(" ".join(RUS), RUS, UKR_G, R, UG) == " ".join(UKR_G)
 
     def test_ukr_to_gaura_times(self):
         # е at word start becomes э via _fix_russian_e_at_beginning (GAURA_TIMES
         # is in RUSSIAN_ENCODINGS)
         expected = " ".join(GAURA_TIMES).replace(" Е ", " Э ").replace(" е ", " э ")
-        assert convert(" ".join(UKR), UKR, GAURA_TIMES, U, G) == expected
+        assert convert(" ".join(UKR_G), UKR_G, GAURA_TIMES, UG, G) == expected
 
     def test_gaura_times_to_ukr(self):
-        assert convert(" ".join(GAURA_TIMES), GAURA_TIMES, UKR, G, U) == " ".join(UKR)
+        assert convert(" ".join(GAURA_TIMES), GAURA_TIMES, UKR_G, G, UG) == " ".join(UKR_G)
 
     def test_rus_to_gaura_times(self):
         assert convert(" ".join(RUS), RUS, GAURA_TIMES, R, G) == " ".join(GAURA_TIMES).replace(" Е ", " Э ").replace(
@@ -262,7 +264,7 @@ class TestIdentity:
         assert convert(full(HK), HK, HK, H, H) == full(HK)
 
     def test_ukr(self):
-        assert convert(full(UKR), UKR, UKR, U, U) == full(UKR)
+        assert convert(full(UKR_G), UKR_G, UKR_G, UG, UG) == full(UKR_G)
 
     def test_rus(self):
         assert convert(" ".join(RUS), RUS, RUS, R, R) == " ".join(RUS)
@@ -280,9 +282,9 @@ class TestJCyrillic:
     @pytest.mark.parametrize(
         "inp,enc_out,expected",
         [
-            ("jagannatha", U, "джаґаннатга"),
-            ("Jagannatha", U, "Джаґаннатга"),
-            ("JAGANNATHA", U, "ДЖАҐАННАТГА"),
+            ("jagannatha", UG, "джаґаннатга"),
+            ("Jagannatha", UG, "Джаґаннатга"),
+            ("JAGANNATHA", UG, "ДЖАҐАННАТГА"),
             ("jagannatha", R, "джаганнатха"),
             ("Jagannatha", R, "Джаганнатха"),
             ("JAGANNATHA", R, "ДЖАГАННАТХА"),
@@ -294,7 +296,7 @@ class TestJCyrillic:
     def test_mixed_sequence(self):
         inp = "JJjJJjJJjJJjJjJjJjJjJjJ"
         expected = "ДЖДжджДЖДжджДЖДжджДЖДжджДжджДжджДжджДжджДжджДж"
-        assert convert(inp, IAST_EXT, UKR, I, U) == expected
+        assert convert(inp, IAST_EXT, UKR_G, I, UG) == expected
 
 
 class TestIASTToBalaram:
@@ -481,3 +483,123 @@ class TestIastInputAliases:
     def test_alias_not_applied_for_non_iast_input(self):
         # A stray ń in non-IAST input is left untouched (не our alias's job)
         assert "ń" in convert("sańge", BALARAM_EXT, RUS, B, R)
+
+
+# ---------------------------------------------------------------------------
+# UKR_H — Ukrainian (кха) variant
+#
+# Identical to UKR_G (Ukrainian (кга)) except voiceless aspirated stops
+# (kh, ch, .th, th, ph) render with х instead of г. Voiced aspirated stops
+# (gh, jh, .dh, dh, bh) are unaffected and still render with г in both.
+# ---------------------------------------------------------------------------
+
+
+class TestUkrHRoundtrip:
+    def test_iast_ext_to_ukr_h(self):
+        expected = " ".join(UKR_H).replace("Дж ДЖ", "Дж Дж")
+        assert convert(" ".join(IAST_EXT), IAST_EXT, UKR_H, I, UH) == expected
+
+    def test_ukr_h_to_iast_ext(self):
+        assert convert(full(UKR_H), UKR_H, IAST_EXT, UH, I) == full(IAST_EXT)
+
+    def test_balaram_ext_to_ukr_h(self):
+        expected = " ".join(UKR_H).replace("Дж ДЖ", "Дж Дж")
+        assert convert(" ".join(BALARAM_EXT), BALARAM_EXT, UKR_H, B, UH) == expected
+
+    def test_ukr_h_to_balaram_ext(self):
+        assert convert(full(UKR_H), UKR_H, BALARAM_EXT, UH, B) == full(BALARAM_EXT)
+
+    def test_velthuis_ext_to_ukr_h(self):
+        expected = " ".join(UKR_H).replace("Дж ДЖ", "Дж Дж")
+        assert convert(" ".join(VELTHUIS_EXT), VELTHUIS_EXT, UKR_H, V, UH) == expected
+
+    def test_ukr_h_to_velthuis_ext(self):
+        assert convert(full(UKR_H), UKR_H, VELTHUIS_EXT, UH, V) == full(VELTHUIS_EXT)
+
+    def test_ukr_h_to_hk_ext(self):
+        assert convert(full(UKR_H), UKR_H, HK_EXT, UH, H) == full(HK_EXT)
+
+    # UKR_G and UKR_H share the same base alphabet table (the only difference
+    # is aspirate post-processing), so this only shows up on an actual
+    # consonant+h cluster, not on the bare alphabet tuple.
+    @pytest.mark.parametrize(
+        "ukr_g_word,ukr_h_word",
+        [
+            ("кга", "кха"),
+            ("чга", "чха"),
+            ("т̣га", "т̣ха"),
+            ("тга", "тха"),
+            ("пга", "пха"),
+            ("ґга", "ґга"),
+            ("джга", "джга"),
+            ("д̣га", "д̣га"),
+            ("дга", "дга"),
+            ("бга", "бга"),
+        ],
+    )
+    def test_ukr_g_to_ukr_h_aspirate_cluster(self, ukr_g_word, ukr_h_word):
+        assert convert(ukr_g_word, UKR_G, UKR_H, UG, UH) == ukr_h_word
+
+    @pytest.mark.parametrize(
+        "ukr_h_word,ukr_g_word",
+        [
+            ("кха", "кга"),
+            ("чха", "чга"),
+            ("т̣ха", "т̣га"),
+            ("тха", "тга"),
+            ("пха", "пга"),
+            ("ґга", "ґга"),
+            ("джга", "джга"),
+            ("д̣га", "д̣га"),
+            ("дга", "дга"),
+            ("бга", "бга"),
+        ],
+    )
+    def test_ukr_h_to_ukr_g_aspirate_cluster(self, ukr_h_word, ukr_g_word):
+        assert convert(ukr_h_word, UKR_H, UKR_G, UH, UG) == ukr_g_word
+
+    def test_identity(self):
+        assert convert(full(UKR_H), UKR_H, UKR_H, UH, UH) == full(UKR_H)
+
+
+class TestAspirateSplit:
+    """Only voiceless stops (kh, ch, .th, th, ph) differ between UKR_G and
+    UKR_H; voiced stops (gh, jh, .dh, dh, bh) render with г in both."""
+
+    @pytest.mark.parametrize(
+        "iast_word,ukr_g_word,ukr_h_word",
+        [
+            ("kha", "кга", "кха"),
+            ("cha", "чга", "чха"),
+            ("ṭha", "т̣га", "т̣ха"),
+            ("tha", "тга", "тха"),
+            ("pha", "пга", "пха"),
+        ],
+    )
+    def test_voiceless_aspirates_differ(self, iast_word, ukr_g_word, ukr_h_word):
+        assert convert(iast_word, IAST_EXT, UKR_G, I, UG) == ukr_g_word
+        assert convert(iast_word, IAST_EXT, UKR_H, I, UH) == ukr_h_word
+
+    @pytest.mark.parametrize(
+        "iast_word,ukr_word",
+        [
+            ("gha", "ґга"),
+            ("jha", "джга"),
+            ("ḍha", "д̣га"),
+            ("dha", "дга"),
+            ("bha", "бга"),
+        ],
+    )
+    def test_voiced_aspirates_unchanged(self, iast_word, ukr_word):
+        assert convert(iast_word, IAST_EXT, UKR_G, I, UG) == ukr_word
+        assert convert(iast_word, IAST_EXT, UKR_H, I, UH) == ukr_word
+
+    @pytest.mark.parametrize(
+        "iast_word",
+        ["kha", "cha", "ṭha", "tha", "pha", "gha", "jha", "ḍha", "dha", "bha"],
+    )
+    def test_roundtrip_through_ukr_g_and_ukr_h(self, iast_word):
+        via_g = convert(convert(iast_word, IAST_EXT, UKR_G, I, UG), UKR_G, IAST_EXT, UG, I)
+        via_h = convert(convert(iast_word, IAST_EXT, UKR_H, I, UH), UKR_H, IAST_EXT, UH, I)
+        assert via_g == iast_word
+        assert via_h == iast_word
