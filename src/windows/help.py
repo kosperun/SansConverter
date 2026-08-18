@@ -73,14 +73,15 @@ class UiHelpDialog(QtWidgets.QDialog):
                 "<br/>"
                 "<b>- Balaram</b> is a legacy ASCII transliteration system developed by ISKCON BBT."
                 "<br/>"
-                "<b>- Harvard-Kyoto</b> is another ASCII scheme to transliterate Sanskrit on any English keyboard without any additional software (but without capital letters)."  # noqa
+                "<b>- Harvard-Kyoto</b> is another ASCII scheme to transliterate Sanskrit on any English keyboard without any additional software (but without capital letters)."
                 "<br/>"
                 "<b>- Velthuis</b> is another ASCII scheme which allows capital letters."
                 "<br/>"
-                "<b>- Cyrillic</b> (Ukrainian and Russian) is based on the IAST system."
+                "<b>- Ukrainian (кга)</b> and <b>Ukrainian (кха)</b> are both based on the IAST system and only differ in how voiceless aspirated consonants (kh, ch, ṭh, th, ph) are written: Ukrainian (кга) uses г (кга, чга, тга, пга), while Ukrainian (кха) uses х (кха, чха, тха, пха). Voiced aspirates (gh, jh, ḍh, dh, bh) are the same in both."
                 "<br/>"
-                "<b>- GauraTimes</b> is a legacy non-Unicode Cyrillic transliteration system developed by ISKCON BBT "
-                "which uses a special font of the same name."
+                "<b>- Russian</b> is based on the IAST system."
+                "<br/>"
+                "<b>- GauraTimes</b> is a legacy non-Unicode Cyrillic transliteration system developed by ISKCON BBT which uses a special font of the same name."
                 "<br/>"
                 "<br/>"
                 "<b>Velthuis scheme:</b>"
@@ -89,21 +90,21 @@ class UiHelpDialog(QtWidgets.QDialog):
                 "<br/>"
                 "- a dot before any consonant that has an underdot in IAST (.m = ṃ, .r = ṛ, .t = ṭ, etc.)"
                 "<br/>"
-                "- a double quotation mark before any consonant that has any diacritical mark above it in IAST (except 'ñ') (thus, “n = ṅ and \"s = ś)"  # noqa
+                "- a double quotation mark before any consonant that has any diacritical mark above it in IAST (except 'ñ') (thus, “n = ṅ and \"s = ś)"
                 "<br/>"
                 "- a tilde (~) before n = ñ."
                 "<br/>"
                 "<br/>"
                 "<b>Harvard-Kyoto scheme:</b>"
                 "<br/>"
-                "A = ā, I = ī, U = ū, R = ṛ, RR = ṝ, lR = ḷ, M = ṃ, H = ḥ, G = ṅ, J = ñ, T = ṭ, D = ḍ, N = ṇ, z = ś, S = ṣ"  # noqa
+                "A = ā, I = ī, U = ū, R = ṛ, RR = ṝ, lR = ḷ, M = ṃ, H = ḥ, G = ṅ, J = ñ, T = ṭ, D = ḍ, N = ṇ, z = ś, S = ṣ"
                 "<br/>"
                 "<br/>"
                 "For more information on different transliteration schemes visit the following links:"
                 "<br/>"
-                'IAST: <a href="https://en.wikipedia.org/wiki/International_Alphabet_of_Sanskrit_Transliteration">https://en.wikipedia.org/wiki/International_Alphabet_of_Sanskrit_Transliteration</a>'  # noqa
+                'IAST: <a href="https://en.wikipedia.org/wiki/International_Alphabet_of_Sanskrit_Transliteration">https://en.wikipedia.org/wiki/International_Alphabet_of_Sanskrit_Transliteration</a>'
                 "<br/>"
-                'Harvard-Kyoto: <a href="https://en.wikipedia.org/wiki/Harvard-Kyoto">https://en.wikipedia.org/wiki/Harvard-Kyoto</a>'  # noqa
+                'Harvard-Kyoto: <a href="https://en.wikipedia.org/wiki/Harvard-Kyoto">https://en.wikipedia.org/wiki/Harvard-Kyoto</a>'
                 "<br/>"
                 'Velthuis: <a href="https://en.wikipedia.org/wiki/Velthuis">https://en.wikipedia.org/wiki/Velthuis</a>',
             )
