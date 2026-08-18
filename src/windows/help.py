@@ -31,26 +31,9 @@ class UiHelpDialog(QtWidgets.QDialog):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("icons8-om-96.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         Dialog.setWindowIcon(icon)
-        self.label = QtWidgets.QLabel(Dialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Ignored)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setAutoFillBackground(True)
-        self.label.setTextFormat(QtCore.Qt.TextFormat.RichText)
-        self.label.setAlignment(
-            QtCore.Qt.AlignmentFlag.AlignLeading | QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignTop
-        )
-        self.label.setWordWrap(True)
+        self.label = QtWidgets.QTextBrowser(Dialog)
+        self.label.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.label.setOpenExternalLinks(True)
-        self.label.setTextInteractionFlags(
-            QtCore.Qt.TextInteractionFlag.LinksAccessibleByKeyboard
-            | QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
-            | QtCore.Qt.TextInteractionFlag.TextBrowserInteraction
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByKeyboard
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
-        )
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 2)
         self.pushButton.clicked.connect(Dialog.accept)
@@ -66,46 +49,60 @@ class UiHelpDialog(QtWidgets.QDialog):
         self.label.setText(
             _translate(
                 "Dialog",
-                "<b>Tip:</b> You can use Harvard-Kyoto or Velthuis as a typing aid — both are pure ASCII, so you can type Sanskrit with diacritics on any standard QWERTY keyboard without any special input methods. Just select one of them as the input system, type your text, and copy the converted result."
-                "<br/>"
-                "<br/>"
-                "<b>- IAST</b> is a transliteration system that is standard among scholars."
-                "<br/>"
-                "<b>- Balaram</b> is a legacy ASCII transliteration system developed by ISKCON BBT."
-                "<br/>"
-                "<b>- Harvard-Kyoto</b> is another ASCII scheme to transliterate Sanskrit on any English keyboard without any additional software (but without capital letters)."
-                "<br/>"
-                "<b>- Velthuis</b> is another ASCII scheme which allows capital letters."
-                "<br/>"
-                "<b>- Ukrainian (кга)</b> and <b>Ukrainian (кха)</b> are both based on the IAST system and only differ in how voiceless aspirated consonants (kh, ch, ṭh, th, ph) are written: Ukrainian (кга) uses г (кга, чга, тга, пга), while Ukrainian (кха) uses х (кха, чха, тха, пха). Voiced aspirates (gh, jh, ḍh, dh, bh) are the same in both."
-                "<br/>"
-                "<b>- Russian</b> is based on the IAST system."
-                "<br/>"
-                "<b>- GauraTimes</b> is a legacy non-Unicode Cyrillic transliteration system developed by ISKCON BBT which uses a special font of the same name."
-                "<br/>"
-                "<br/>"
-                "<b>Velthuis scheme:</b>"
-                "<br/>"
-                "- a double vowel for all long vowels (aa = ā, ii = ī, .rr = ṝ, AA = Ā, .RR = Ṝ, etc.)"
-                "<br/>"
-                "- a dot before any consonant that has an underdot in IAST (.m = ṃ, .r = ṛ, .t = ṭ, etc.)"
-                "<br/>"
-                "- a double quotation mark before any consonant that has any diacritical mark above it in IAST (except 'ñ') (thus, “n = ṅ and \"s = ś)"
-                "<br/>"
-                "- a tilde (~) before n = ñ."
-                "<br/>"
-                "<br/>"
-                "<b>Harvard-Kyoto scheme:</b>"
-                "<br/>"
-                "A = ā, I = ī, U = ū, R = ṛ, RR = ṝ, lR = ḷ, M = ṃ, H = ḥ, G = ṅ, J = ñ, T = ṭ, D = ḍ, N = ṇ, z = ś, S = ṣ"
-                "<br/>"
-                "<br/>"
-                "For more information on different transliteration schemes visit the following links:"
-                "<br/>"
-                'IAST: <a href="https://en.wikipedia.org/wiki/International_Alphabet_of_Sanskrit_Transliteration">https://en.wikipedia.org/wiki/International_Alphabet_of_Sanskrit_Transliteration</a>'
-                "<br/>"
-                'Harvard-Kyoto: <a href="https://en.wikipedia.org/wiki/Harvard-Kyoto">https://en.wikipedia.org/wiki/Harvard-Kyoto</a>'
-                "<br/>"
-                'Velthuis: <a href="https://en.wikipedia.org/wiki/Velthuis">https://en.wikipedia.org/wiki/Velthuis</a>',
+                "<p><b>Tip:</b> You can use Harvard-Kyoto or Velthuis as a typing aid — both are pure ASCII, so you "
+                "can type Sanskrit with diacritics on any standard QWERTY keyboard without any special input "
+                "methods. Just select one of them as the input system, type your text, and copy the converted "
+                "result.</p>"
+                "<ul>"
+                "<li><b>IAST</b> is a transliteration system that is standard among scholars.</li>"
+                "<li><b>Balaram</b> is a legacy ASCII transliteration system developed by ISKCON BBT.</li>"
+                "<li><b>Harvard-Kyoto</b> is another ASCII scheme to transliterate Sanskrit on any English "
+                "keyboard without any additional software (but without capital letters).</li>"
+                "<li><b>Velthuis</b> is another ASCII scheme which allows capital letters.</li>"
+                "<li><b>Ukrainian (кга)</b> and <b>Ukrainian (кха)</b> are both based on the IAST system:"
+                "<ul>"
+                "<li>They only differ in how voiceless aspirated consonants (kh, ch, ṭh, th, ph) are written.</li>"
+                "<li>Ukrainian (кга) uses г: кга, чга, т̣га, тга, пга. Ukrainian (кха) uses х: кха, чха, т̣ха, тха, "
+                "пха.</li>"
+                "<li>Voiced aspirates (gh, jh, ḍh, dh, bh) are the same in both: ґга, джга, д̣га, дга, бга.</li>"
+                "</ul>"
+                "</li>"
+                "<li><b>Russian</b> is based on the IAST system.</li>"
+                "<li><b>GauraTimes</b> is a legacy non-Unicode Cyrillic transliteration system developed by "
+                "ISKCON BBT which uses a special font of the same name.</li>"
+                "</ul>"
+                "<p><b>Velthuis scheme:</b></p>"
+                "<ul>"
+                "<li>a double vowel for all long vowels (aa = ā, ii = ī, .rr = ṝ, AA = Ā, .RR = Ṝ, etc.)</li>"
+                "<li>a dot before any consonant that has an underdot in IAST (.m = ṃ, .r = ṛ, .t = ṭ, etc.)</li>"
+                "<li>a double quotation mark before any consonant that has any diacritical mark above it in IAST "
+                "(except 'ñ') (thus, “n = ṅ and \"s = ś)</li>"
+                "<li>a tilde (~) before n = ñ.</li>"
+                "</ul>"
+                "<p><b>Harvard-Kyoto scheme:</b></p>"
+                "<p>A = ā, I = ī, U = ū, R = ṛ, RR = ṝ, lR = ḷ, M = ṃ, H = ḥ, G = ṅ, J = ñ, T = ṭ, D = ḍ, N = ṇ, "
+                "z = ś, S = ṣ</p>"
+                "<p>For more information on different transliteration schemes visit the following links:</p>"
+                "<ul>"
+                '<li>IAST: <a href="https://en.wikipedia.org/wiki/International_Alphabet_of_Sanskrit_Transliteration">'
+                "https://en.wikipedia.org/wiki/International_Alphabet_of_Sanskrit_Transliteration</a></li>"
+                '<li>Harvard-Kyoto: <a href="https://en.wikipedia.org/wiki/Harvard-Kyoto">'
+                "https://en.wikipedia.org/wiki/Harvard-Kyoto</a></li>"
+                '<li>Velthuis: <a href="https://en.wikipedia.org/wiki/Velthuis">'
+                "https://en.wikipedia.org/wiki/Velthuis</a></li>"
+                "</ul>",
             )
         )
+        # QTextBrowser's default size hint doesn't grow with its content the
+        # way QLabel's did, so Dialog.adjustSize() (called by open_help())
+        # would otherwise shrink the window well below a readable size.
+        # Measuring on a standalone document clone (rather than
+        # self.label.document() directly) avoids a race with QTextBrowser's
+        # own resizeEvent, which continuously re-applies setTextWidth() to
+        # match the widget's current (still-small, pre-layout) width.
+        document_width = 600
+        measuring_document = QtGui.QTextDocument()
+        measuring_document.setHtml(self.label.toHtml())
+        measuring_document.setTextWidth(document_width)
+        content_size = measuring_document.size().toSize()
+        self.label.setMinimumSize(content_size.width(), content_size.height())

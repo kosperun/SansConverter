@@ -2,6 +2,8 @@
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
+from _version import __version__
+
 
 class UiAboutDialog(QtWidgets.QDialog):
     """Creates an 'About' dialog window"""
@@ -20,25 +22,9 @@ class UiAboutDialog(QtWidgets.QDialog):
         Dialog.resize(377, 350)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
-        self.label = QtWidgets.QLabel(Dialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Ignored)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setTextFormat(QtCore.Qt.TextFormat.RichText)
-        self.label.setAlignment(
-            QtCore.Qt.AlignmentFlag.AlignLeading
-            | QtCore.Qt.AlignmentFlag.AlignCenter
-            | QtCore.Qt.AlignmentFlag.AlignVCenter
-        )
-        self.label.setWordWrap(True)
+        self.label = QtWidgets.QTextBrowser(Dialog)
+        self.label.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.label.setOpenExternalLinks(True)
-        self.label.setTextInteractionFlags(
-            QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByKeyboard
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
-        )
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 2)
         icon = QtGui.QIcon()
@@ -64,24 +50,41 @@ class UiAboutDialog(QtWidgets.QDialog):
         self.label.setText(
             _translate(
                 "Dialog",
+                '<div style="text-align:center">'
                 "<b>SansConverter</b>"
                 "<br/>"
                 "<br/>"
-                "SansConverter is an offline tool to easily convert romanized Sanskrit text from one system of "
-                "transliteration to another."
+                "SansConverter is an offline tool that converts romanized Sanskrit text between transliteration "
+                "systems — such as IAST, Harvard-Kyoto, Velthuis, and Cyrillic schemes."
                 "<br/>"
                 "<br/>"
-                "It can also be used to type in Sanskrit text with diacritics (using HK or Velthuis systems)."
+                "It also works as a typing aid: type Sanskrit using the plain-ASCII Harvard-Kyoto or Velthuis "
+                "notation, then convert to IAST (or another scheme) to get the correct diacritical marks — no "
+                "special keyboard or input method needed."
                 "<br/>"
                 "<br/>"
                 "Copyright © 2022-2026 Kostiantyn Perun."
                 "<br/>"
-                "Version 2.0"
+                f"Version {__version__}"
                 "<br/>"
                 '<a href="https://github.com/kosperun/SansConverter">https://github.com/kosperun/SansConverter</a>'
                 "<br/>"
                 "<br/>"
-                'Send your feedback or suggestions to <a href= "mailto: kosperun@gmail.com">kosperun@gmail.com</a>',
+                'Send your feedback or suggestions to <a href= "mailto: kosperun@gmail.com">kosperun@gmail.com</a>'
+                "</div>",
             )
         )
         self.pushButton.setText(_translate("Dialog", "Close"))
+        # QTextBrowser's default size hint doesn't grow with its content the
+        # way QLabel's did, so Dialog.adjustSize() (called by open_about())
+        # would otherwise shrink the window well below a readable size.
+        # Measuring on a standalone document clone (rather than
+        # self.label.document() directly) avoids a race with QTextBrowser's
+        # own resizeEvent, which continuously re-applies setTextWidth() to
+        # match the widget's current (still-small, pre-layout) width.
+        document_width = 340
+        measuring_document = QtGui.QTextDocument()
+        measuring_document.setHtml(self.label.toHtml())
+        measuring_document.setTextWidth(document_width)
+        content_size = measuring_document.size().toSize()
+        self.label.setMinimumSize(content_size.width(), content_size.height())
