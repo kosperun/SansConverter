@@ -43,6 +43,12 @@ class SansConverter(QtWidgets.QMainWindow):
         # size and position:
         self.selected_encodings = self.settings.value("selected_encodings", [])
         self.selected_encodings = [RENAMED_ENCODINGS.get(e, e) for e in self.selected_encodings]
+        # Users who had Ukrainian (кга) selected before Ukrainian (кха) existed
+        # would otherwise never see the new variant without opening Select
+        # encodings themselves. Add it next to кга, preserving their own order.
+        if Encodings.UKR_G.value in self.selected_encodings and Encodings.UKR_H.value not in self.selected_encodings:
+            ukr_g_index = self.selected_encodings.index(Encodings.UKR_G.value)
+            self.selected_encodings.insert(ukr_g_index + 1, Encodings.UKR_H.value)
 
         if not self.selected_encodings:
             self.selected_encodings = self.all_encodings
