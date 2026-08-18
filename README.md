@@ -73,11 +73,9 @@ xattr -dr com.apple.quarantine /path/to/SansConverter.app
 More information about each transliteration system is available under the **Help** menu. You can send feedback or bug reports directly from the **About** menu.
 
 ### SansConverter in action
-#### part 1
+
 ![image](https://user-images.githubusercontent.com/68146217/182867782-faad4e8c-598f-431d-9da4-5193ca0fd7ea.png)
 
-#### part 2
 ![image](https://user-images.githubusercontent.com/68146217/182867851-186603ab-0bea-4a8b-9b03-3608b9f5530d.png)
 
-#### part 3
 ![image](https://user-images.githubusercontent.com/68146217/182867915-54d98757-79b0-45d4-ba61-8a6b45a57fe4.png)
