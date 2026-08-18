@@ -10,6 +10,8 @@ HK is lowercase-only by design — HK output tests use only the lowercase half
 of the tuples (indices 0-14).
 """
 
+import unicodedata
+
 import pytest
 
 from encoding_mappings import (
@@ -603,3 +605,90 @@ class TestAspirateSplit:
         via_h = convert(convert(iast_word, IAST_EXT, UKR_H, I, UH), UKR_H, IAST_EXT, UH, I)
         assert via_g == iast_word
         assert via_h == iast_word
+
+
+# ---------------------------------------------------------------------------
+# Script and normal-form integrity of the encoding tables
+# (https://github.com/kosperun/SansConverter/issues/7)
+#
+# The Russian scheme once stored long ā/Ā as the Latin look-alike ā/Ā (U+0101/
+# U+0100) instead of the Cyrillic а/А + COMBINING MACRON that VedaBase actually
+# emits. The Latin key never matched real Cyrillic input, so ā silently passed
+# through unconverted. Separately, UKR_G/UKR_H's uppercase Ī was stored as
+# decomposed Latin I + COMBINING MACRON (U+0049 U+0304) even though Latin has
+# a precomposed Ī (U+012A) — an internal inconsistency this test suite caught
+# and which was fixed alongside adding these tests.
+#
+# Two checks, over IAST/IAST_EXT and the Cyrillic tables (the schemes where
+# Unicode normal form actually matters for matching real-world input):
+# 1. Cyrillic tables must actually be Cyrillic, not Latin look-alikes.
+# 2. Every entry must already be in NFC — i.e. no character is stored
+#    decomposed when Unicode defines a precomposed form for it. NFC composes
+#    wherever a precomposed codepoint exists and leaves everything else
+#    untouched, so this single check also happens to enforce canonical
+#    combining-mark order (e.g. the ṝ dot-below-then-macron ordering) as a
+#    side effect, without needing a hand-maintained list of "correct" orders.
+#
+# BALARAM, VELTHUIS and HK are excluded: they're ASCII-first legacy schemes
+# not meant to carry precomposed Unicode diacritics as their primary form.
+# GAURA_TIMES is excluded: it's a legacy non-Unicode font encoding that uses
+# Private Use Area codepoints by design, not real Cyrillic diacritics.
+# ---------------------------------------------------------------------------
+
+CYRILLIC_TABLES_TO_CHECK = {
+    "UKR_G": UKR_G,
+    "UKR_H": UKR_H,
+    "RUS": RUS,
+}
+
+NORMAL_FORM_TABLES_TO_CHECK = {
+    "IAST": IAST,
+    "IAST_EXT": IAST_EXT,
+    **CYRILLIC_TABLES_TO_CHECK,
+}
+
+# Known-deliberate exceptions: Cyrillic has no precomposed long-ī, so UKR_G/
+# UKR_H stand in with Latin dotless ı (U+0131) + COMBINING MACRON (U+0304) for
+# lowercase, and precomposed Latin Ī (U+012A) for uppercase (Unicode defines
+# no separate "dotless capital I", since capital I never has a dot to
+# remove — its uppercase form is just Latin I). Both are intentional Latin
+# look-alikes, not a bug — allow-listed for the script check. Built from
+# explicit codepoints, not retyped literals — the whole point of these tests
+# is that visually-identical strings can be very different codepoint
+# sequences.
+KNOWN_LATIN_LOOKALIKES = {chr(0x0131) + chr(0x0304), chr(0x012A)}
+
+# Of those, only the lowercase one has no precomposed form at all (Unicode
+# defines no "dotless i with macron"), so only it is exempt from the
+# NFC-canonical check; the uppercase Ī (U+012A) is itself already precomposed.
+KNOWN_UNCOMPOSABLE_ENTRIES = {chr(0x0131) + chr(0x0304)}
+
+
+def _is_cyrillic_or_combining(ch: str) -> bool:
+    name = unicodedata.name(ch, "")
+    return name.startswith("CYRILLIC") or name.startswith("COMBINING")
+
+
+class TestEncodingTableScriptIntegrity:
+    @pytest.mark.parametrize("table_name", CYRILLIC_TABLES_TO_CHECK)
+    def test_no_latin_lookalikes(self, table_name):
+        table = CYRILLIC_TABLES_TO_CHECK[table_name]
+        offenders = [
+            entry
+            for entry in table
+            if entry not in KNOWN_LATIN_LOOKALIKES and not all(_is_cyrillic_or_combining(ch) for ch in entry)
+        ]
+        assert offenders == [], f"{table_name} has non-Cyrillic character(s) hiding as look-alikes: {offenders}"
+
+    @pytest.mark.parametrize("table_name", NORMAL_FORM_TABLES_TO_CHECK)
+    def test_entries_are_nfc_precomposed(self, table_name):
+        table = NORMAL_FORM_TABLES_TO_CHECK[table_name]
+        offenders = [
+            entry
+            for entry in table
+            if entry not in KNOWN_UNCOMPOSABLE_ENTRIES and entry != unicodedata.normalize("NFC", entry)
+        ]
+        assert offenders == [], (
+            f"{table_name} has non-NFC-canonical character(s) — decomposed where a precomposed "
+            f"form exists, and/or non-canonical combining-mark order: {offenders}"
+        )
